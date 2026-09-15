@@ -8,103 +8,111 @@
 <title>Listening test — Foley sound synthesis</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
     --paper:#F4F3EF; --card:#FFFFFF; --ink:#17171B; --dim:#6A6A75;
     --faint:#9A9AA4; --rule:#DEDDD7; --rule-lo:#E8E7E2;
     --violet:#440154; --violet-lo:#7A3E8C; --violet-wash:rgba(68,1,84,.055);
-    --teal:#1B7F7A; --yellow:#FDE725; --wrap:760px;
+    --teal:#1B7F7A; --yellow:#FDE725; --wrap:780px;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--paper);color:var(--ink);
     font-family:"Plus Jakarta Sans",system-ui,sans-serif;
-    font-size:16.5px;line-height:1.72;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:var(--wrap);margin:0 auto;padding:0 26px}
+    font-size:16.5px;line-height:1.7;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
   a{color:var(--teal);text-decoration:none} a:hover{color:var(--violet)}
   :focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:3px}
-  p{margin:0 0 1.05em}
-  h1,h2,h3{font-family:"Outfit",system-ui,sans-serif;letter-spacing:-.015em;margin:0}
-  h1{font-size:clamp(1.7rem,3.4vw,2.4rem);font-weight:600;line-height:1.16}
+  p{margin:0 0 1em}
+  h1,h2{font-family:"Outfit",system-ui,sans-serif;letter-spacing:-.015em;margin:0}
+  h1{font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:600;line-height:1.16}
   h1 .hl{color:var(--violet);background:linear-gradient(transparent 62%,rgba(253,231,37,.55) 62%)}
-  h2{font-size:1.28rem;font-weight:600;margin-bottom:.5em}
-  h3{font-size:.95rem;font-weight:600;margin-bottom:5px}
+  h2{font-size:1.1rem;font-weight:600}
 
-  nav.bar{position:sticky;top:0;z-index:60;background:rgba(244,243,239,.9);
+  nav.bar{position:sticky;top:0;z-index:60;background:rgba(244,243,239,.94);
     backdrop-filter:blur(12px);border-bottom:1px solid var(--rule-lo)}
-  .bar-in{max-width:var(--wrap);margin:0 auto;padding:0 26px;height:50px;
-    display:flex;align-items:center;justify-content:space-between;gap:16px}
-  .bar-name{font-family:"Outfit",sans-serif;font-weight:700;font-size:.92rem}
+  .bar-in{max-width:var(--wrap);margin:0 auto;padding:0 24px;height:48px;
+    display:flex;align-items:center;justify-content:space-between;gap:14px}
+  .bar-name{font-family:"Outfit",sans-serif;font-weight:700;font-size:.9rem}
   .bar-name span{color:var(--violet)}
-  .bar-prog{font-family:"JetBrains Mono",monospace;font-size:.68rem;
-    letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
-
+  .bar-prog{font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--dim)}
   .track{height:3px;background:var(--rule-lo)}
-  .track > i{display:block;height:100%;width:0;background:var(--violet);
-    transition:width .35s ease}
+  .track>i{display:block;height:100%;width:0;background:var(--violet);transition:width .3s}
 
-  section{padding:38px 0 60px}
-  .card{background:var(--card);border:1px solid var(--rule);border-radius:14px;
-    padding:26px 28px;margin:0 0 18px}
-  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.68rem;
-    letter-spacing:.1em;text-transform:uppercase;color:var(--violet-lo);
-    display:block;margin-bottom:9px}
-  .muted{color:var(--dim);font-size:.94rem}
+  section{padding:30px 0 40px}
+  .intro{background:var(--card);border:1px solid var(--rule);border-radius:14px;
+    padding:22px 24px;margin:18px 0 30px}
+  .muted{color:var(--dim);font-size:.95rem}
   .tiny{color:var(--faint);font-size:.82rem;line-height:1.6}
-  ul{margin:0 0 1.05em;padding-left:1.15em} li{margin-bottom:.4em}
+  .note{border-left:3px solid var(--yellow);padding:2px 0 2px 13px;
+    color:var(--dim);font-size:.92rem;margin:14px 0}
+  .alert{display:flex;gap:14px;align-items:flex-start;
+    background:#FFF8D6;border:1px solid #E8D26A;border-radius:12px;
+    padding:16px 18px;margin:20px 0 0}
+  .alert .ico{font-size:1.5rem;line-height:1.2;flex-shrink:0}
+  .alert b{font-family:"Outfit",sans-serif;font-size:1rem;display:block;
+    margin-bottom:3px;color:#6B5600}
+  .alert p{margin:0;font-size:.93rem;color:#6B5600;line-height:1.6}
 
-  button{font-family:inherit;font-size:1rem;cursor:pointer;border-radius:9px;
-    border:1px solid var(--rule);background:var(--card);color:var(--ink);
-    padding:11px 20px;transition:.14s}
-  button:hover:not(:disabled){border-color:var(--violet-lo);color:var(--violet)}
-  button:disabled{opacity:.4;cursor:not-allowed}
-  .primary{background:var(--violet);color:#fff;border-color:var(--violet);
-    font-weight:600;padding:13px 30px}
-  .primary:hover:not(:disabled){background:var(--violet-lo);color:#fff}
-  .row{display:flex;gap:11px;align-items:center;flex-wrap:wrap;margin-top:18px}
+  .scene{margin:0 0 34px}
+  .scene-h{display:flex;align-items:baseline;gap:10px;margin:0 0 12px;
+    padding-bottom:8px;border-bottom:1px solid var(--rule)}
+  .scene-h b{font-family:"Outfit",sans-serif;font-size:1.12rem;font-weight:600}
+  .scene-h span{font-family:"JetBrains Mono",monospace;font-size:.68rem;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
 
-  .play{display:flex;align-items:center;gap:14px;background:var(--violet-wash);
-    border:1px solid rgba(68,1,84,.14);border-radius:12px;padding:16px 18px;
-    margin:14px 0 20px}
-  .play button{min-width:118px;font-weight:600}
-  .bars{display:flex;gap:3px;align-items:flex-end;height:26px;flex:1}
-  .bars i{flex:1;background:var(--rule);border-radius:1px;height:20%;
-    transition:height .12s ease}
-  .bars.on i{background:var(--violet-lo)}
+  .item{background:var(--card);border:1px solid var(--rule);border-radius:12px;
+    padding:14px 16px;margin:0 0 10px;transition:.15s}
+  .item.done{border-color:rgba(27,127,122,.45);background:rgba(27,127,122,.035)}
+  .item-top{display:flex;align-items:center;gap:11px;margin-bottom:10px}
+  .item-top .lbl{font-family:"JetBrains Mono",monospace;font-size:.72rem;
+    color:var(--faint);min-width:22px}
+  .play{border:1px solid var(--rule);background:var(--violet-wash);
+    border-radius:9px;padding:8px 16px;font-family:inherit;font-size:.9rem;
+    font-weight:600;cursor:pointer;min-width:94px;transition:.14s}
+  .play:hover{border-color:var(--violet-lo);color:var(--violet)}
+  .play.on{background:var(--violet);color:#fff;border-color:var(--violet)}
+  .wave{display:flex;gap:2px;align-items:flex-end;height:20px;flex:1}
+  .wave i{flex:1;background:var(--rule);border-radius:1px;height:22%}
+  .wave.on i{background:var(--violet-lo)}
 
-  .scale{margin:16px 0 4px}
-  .scale-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-  .scale-h b{font-size:.97rem;font-weight:600}
-  .ends{display:flex;justify-content:space-between;margin-top:5px}
-  .ends span{font-size:.76rem;color:var(--faint)}
-  .opts{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
-  .opts button{padding:10px 2px;border-radius:8px;min-width:0;line-height:1.25;
-    display:flex;flex-direction:column;align-items:center;gap:2px}
-  .opts button b{font-family:"JetBrains Mono",monospace;font-size:.95rem;font-weight:500}
-  .opts button i{font-style:normal;font-size:.68rem;color:var(--faint);
-    letter-spacing:.01em;text-align:center}
+  .q{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;margin-top:7px}
+  .q>span{font-size:.84rem;color:var(--dim)}
+  .opts{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+  .opts button{font-family:inherit;border:1px solid var(--rule);background:#fff;
+    border-radius:8px;padding:7px 2px;cursor:pointer;line-height:1.2;
+    display:flex;flex-direction:column;align-items:center;gap:1px;transition:.12s}
+  .opts button:hover{border-color:var(--violet-lo)}
+  .opts button b{font-family:"JetBrains Mono",monospace;font-size:.86rem;font-weight:500}
+  .opts button i{font-style:normal;font-size:.62rem;color:var(--faint);text-align:center}
+  .opts button[aria-pressed="true"]{background:var(--violet);color:#fff;border-color:var(--violet)}
   .opts button[aria-pressed="true"] i{color:rgba(255,255,255,.85)}
-  .opts button[aria-pressed="true"]{background:var(--violet);color:#fff;
-    border-color:var(--violet);font-weight:600}
 
-  .ab{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0 6px}
-  .ab button{padding:20px 12px;font-weight:600}
-  .ab button[aria-pressed="true"]{background:var(--violet);color:#fff;border-color:var(--violet)}
-  .wide{width:100%;margin-top:10px}
-  .wide[aria-pressed="true"]{background:var(--violet);color:#fff;border-color:var(--violet)}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}
+  .pair button,.none{font-family:inherit;font-size:.92rem;border:1px solid var(--rule);
+    background:#fff;border-radius:9px;padding:11px;cursor:pointer;transition:.12s}
+  .pair button:hover,.none:hover{border-color:var(--violet-lo)}
+  .pair button[aria-pressed="true"],.none[aria-pressed="true"]{
+    background:var(--violet);color:#fff;border-color:var(--violet)}
+  .none{width:100%;margin-top:7px;font-size:.86rem;color:var(--dim)}
 
-  .note{border-left:3px solid var(--yellow);padding:3px 0 3px 14px;
-    color:var(--dim);font-size:.9rem;margin:14px 0}
-  .warn{border-left:3px solid #C0392B;padding:3px 0 3px 14px;
-    color:#9B2F22;font-size:.9rem;margin:14px 0}
-  code{font-family:"JetBrains Mono",monospace;font-size:.85em;
-    background:var(--rule-lo);padding:1px 5px;border-radius:4px}
-  textarea{width:100%;font-family:inherit;font-size:.95rem;padding:11px;
-    border:1px solid var(--rule);border-radius:9px;resize:vertical;min-height:74px}
+  .submit{position:sticky;bottom:0;background:rgba(244,243,239,.96);
+    backdrop-filter:blur(10px);border-top:1px solid var(--rule);padding:13px 0}
+  .submit-in{max-width:var(--wrap);margin:0 auto;padding:0 24px;
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .primary{background:var(--violet);color:#fff;border:1px solid var(--violet);
+    border-radius:9px;font-family:inherit;font-size:1rem;font-weight:600;
+    padding:12px 30px;cursor:pointer}
+  .primary:disabled{opacity:.35;cursor:not-allowed}
+  textarea{width:100%;font-family:inherit;font-size:.94rem;padding:10px;
+    border:1px solid var(--rule);border-radius:9px;resize:vertical;min-height:62px}
+  .warn{border-left:3px solid #C0392B;padding:3px 0 3px 13px;color:#9B2F22;
+    font-size:.9rem;margin:12px 0}
   .hide{display:none}
-  @media(max-width:560px){
-    .opts button i{font-size:.6rem}
-    .ab{grid-template-columns:1fr}
+  @media(max-width:600px){
+    .q{grid-template-columns:1fr;gap:5px}
+    .opts button i{font-size:.56rem}
+    .pair{grid-template-columns:1fr}
   }
 </style>
 </head>
@@ -112,586 +120,351 @@
 
 <nav class="bar">
   <div class="bar-in">
-    <div class="bar-name">SB-CFM <span>listening test</span></div>
-    <div class="bar-prog" id="prog"></div>
+    <div class="bar-name">Foley <span>listening test</span></div>
+    <div class="bar-prog" id="prog">0 / 0</div>
   </div>
-  <div class="track"><i id="trackfill"></i></div>
+  <div class="track"><i id="fill"></i></div>
 </nav>
 
 <section><div class="wrap">
 
-<!-- ═══════════ welcome ═══════════ -->
-<div id="s-welcome">
-  <h1>Help us rate <span class="hl">synthesised sound effects</span></h1>
-  <p class="muted" style="margin-top:14px">
-    You will hear short recordings of everyday sounds and rate each one on two
-    scales. It takes about <b>20 minutes</b>. Your answers are anonymous and are
-    used only in aggregate, for a research paper on sound synthesis.
-  </p>
+<div id="head">
+  <h1>Rate these <span class="hl">sound effects</span></h1>
 
-  <div class="card">
-    <span class="eyebrow">Before you start</span>
-    <ul>
-      <li><b>Wear headphones.</b> Laptop and phone speakers hide exactly the
-        differences we are asking about. There is a short check on the next page.</li>
-      <li>Find a quiet place and set your volume to a comfortable level. Keep it
-        there for the whole session — changing it mid-way makes your ratings
-        inconsistent.</li>
-      <li>Use a desktop or laptop if you can.</li>
-      <li>Finish in one sitting. Progress is saved in this browser, so you can
-        reload if something goes wrong, but a different device starts over.</li>
-    </ul>
+  <div class="alert">
+    <span class="ico">🎧</span>
+    <div>
+      <b>Please wear headphones</b>
+      <p>Laptop and phone speakers hide the differences this study is about, and
+      ratings made on them are not usable. If you do not have headphones to hand,
+      please come back when you do rather than continuing on speakers.</p>
+    </div>
+  </div>
+
+  <div class="intro">
+    <p class="muted" style="margin-bottom:.7em">
+      You will hear short clips of everyday sounds. For each one give two
+      ratings: how <b>clean</b> it sounds, and how well it <b>matches the name</b>
+      we give it. About 15 minutes. Anonymous, and used only in aggregate for a
+      research paper.
+    </p>
+    <p class="muted" style="margin-bottom:.7em">
+      <b>Sound quality</b> is about the recording itself — free of fuzziness,
+      distortion, hiss, or a muffled, smeared quality. A clean recording of the
+      wrong thing still scores high here. <b>Category fit</b> is whether you would
+      call it by that name. The number of events does not matter; one footstep
+      and twenty can both fit perfectly.
+    </p>
+    <div class="note">
+      Find somewhere quiet, set a comfortable volume, and keep it there for the
+      whole session — changing it part way makes your ratings inconsistent with
+      each other.
+    </div>
     <p class="tiny" style="margin:0">
-      Participation is voluntary and you may close the page at any time; nothing
-      is recorded unless you reach the final screen and submit. We collect only
-      your ratings, timing, browser type, and screen size. No name, email, or IP
-      address is stored.
+      Voluntary, and you may close the page at any time — nothing is recorded
+      until you press submit. We store your ratings, browser type and screen
+      size. No name, email or IP address.
     </p>
   </div>
-
-  <div class="row">
-    <button class="primary" onclick="go('headphone')">Start</button>
-    <span class="tiny" id="resume-note"></span>
-  </div>
 </div>
 
-<!-- ═══════════ headphone check ═══════════ -->
-<div id="s-headphone" class="hide">
-  <span class="eyebrow">Step 1 of 4 — equipment check</span>
-  <h2>Which tone is the quietest?</h2>
-  <p class="muted">
-    Three tones play one after another. One of them is quieter than the other
-    two <i>through headphones</i>. Press play, listen, then choose.
-    There are three rounds.
-  </p>
+<div id="body"></div>
 
-  <div class="card">
-    <div class="play">
-      <button id="hp-play">Play tones</button>
-      <div class="bars" id="hp-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-    </div>
-    <div class="ab" style="grid-template-columns:1fr 1fr 1fr">
-      <button data-hp="0" disabled>First</button>
-      <button data-hp="1" disabled>Second</button>
-      <button data-hp="2" disabled>Third</button>
-    </div>
-    <p class="tiny" id="hp-status" style="margin:12px 0 0">Round 1 of 3.</p>
-  </div>
-
-  <div class="warn hide" id="hp-fail">
-    That did not match what we expected. Please check that your headphones are
-    plugged in, worn the right way round, and that nothing else is playing, then
-    try again.
-  </div>
-  <div class="row"><button id="hp-retry" class="hide" onclick="startHeadphone()">Try again</button></div>
+<div id="tail" class="hide">
+  <div class="scene-h"><b>Anything to add?</b><span>optional</span></div>
+  <textarea id="comment" placeholder="Anything that seemed off about the task or the audio — leave blank if nothing"></textarea>
 </div>
 
-<!-- ═══════════ instructions ═══════════ -->
-<div id="s-brief" class="hide">
-  <span class="eyebrow">Step 2 of 4 — what to listen for</span>
-  <h2>Two things to judge, separately</h2>
-
-  <div class="card">
-    <h3>Sound quality</h3>
-    <p class="muted" style="margin-bottom:0">
-      How clean the recording is: free of artefacts, fuzziness, distortion,
-      hiss, or a muffled, smeared quality. Judge only how it <i>sounds</i>,
-      not what it is. A crisp recording of the wrong thing still scores high here.
-    </p>
+<div id="fallback" class="hide">
+  <div class="warn">
+    We could not reach the server. Press the button to save a small file and send
+    it to <a href="mailto:jjj333@chosun.ac.kr">jjj333@chosun.ac.kr</a>. Your
+    answers are not lost.
   </div>
-
-  <div class="card">
-    <h3>Category fit</h3>
-    <p class="muted" style="margin-bottom:0">
-      How readily you would call the sound by the name we give you. Use your
-      general sense of what that category sounds like — there is no single
-      correct example, and the number of events in the clip does not matter.
-      A clip with one footstep and a clip with twenty can both fit perfectly.
-    </p>
-  </div>
-
-  <div class="note">
-    Both scales run from <b>1</b> to <b>5</b>. Treat 5 as the best a sound could
-    possibly be, not merely the best in this test, and 1 as unusable. Most clips
-    will land in between — please use the whole range rather than clustering on
-    3.
-  </div>
-
-  <p class="muted">
-    You can replay a clip as often as you like. There is no time limit, but go
-    with your first impression; deliberating rarely improves these judgements.
-  </p>
-
-  <div class="row"><button class="primary" onclick="startPractice()">Two practice clips</button></div>
+  <button class="primary" onclick="saveBackup()">Save my answers as a file</button>
 </div>
 
-<!-- ═══════════ rating (practice + main) ═══════════ -->
-<div id="s-rate" class="hide">
-  <span class="eyebrow" id="rate-eyebrow"></span>
-  <h2 id="rate-title"></h2>
-  <p class="muted" id="rate-sub"></p>
-
-  <div class="card">
-    <div class="play">
-      <button id="r-play">Play</button>
-      <div class="bars" id="r-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-    </div>
-
-    <div class="scale">
-      <div class="scale-h"><b>Sound quality</b><span class="tiny" id="q-val">not set</span></div>
-      <div class="opts" id="q-opts"></div>
-      <div class="ends"><span>1 — unusable</span><span>5 — flawless</span></div>
-    </div>
-
-    <div class="scale">
-      <div class="scale-h"><b>Category fit — <span id="fit-cat"></span></b><span class="tiny" id="f-val">not set</span></div>
-      <div class="opts" id="f-opts"></div>
-      <div class="ends"><span>1 — not this at all</span><span>5 — unmistakably this</span></div>
-    </div>
-
-    <div class="row">
-      <button class="primary" id="r-next" disabled>Next</button>
-      <span class="tiny" id="r-hint">Play the clip, then rate both scales.</span>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════ A/B preference ═══════════ -->
-<div id="s-ab" class="hide">
-  <span class="eyebrow" id="ab-eyebrow"></span>
-  <h2>Which one sounds more like the real thing?</h2>
-  <p class="muted" id="ab-sub"></p>
-
-  <div class="card">
-    <div class="play">
-      <button id="ab-playA" style="min-width:96px">Play A</button>
-      <button id="ab-playB" style="min-width:96px">Play B</button>
-      <div class="bars" id="ab-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-    </div>
-    <div class="ab">
-      <button data-ab="A" disabled>A is better</button>
-      <button data-ab="B" disabled>B is better</button>
-    </div>
-    <button class="wide" data-ab="none" disabled>No preference</button>
-    <div class="row">
-      <button class="primary" id="ab-next" disabled>Next</button>
-      <span class="tiny" id="ab-hint">Play both clips before choosing.</span>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════ finish ═══════════ -->
-<div id="s-done" class="hide">
-  <span class="eyebrow">Step 4 of 4 — finish</span>
-  <h2>That is everything. Thank you.</h2>
-  <p class="muted">
-    One optional question before you submit: did anything about the task or the
-    audio seem off? Anything at all is useful.
-  </p>
-  <div class="card">
-    <textarea id="comment" placeholder="Optional — leave blank if nothing comes to mind"></textarea>
-    <div class="row">
-      <button class="primary" id="submit-btn">Submit my answers</button>
-      <span class="tiny" id="submit-status"></span>
-    </div>
-  </div>
-  <div id="fallback" class="hide">
-    <div class="warn">
-      We could not reach the server. Please press the button below to save a
-      small file and send it to <a href="mailto:jjj333@chosun.ac.kr">jjj333@chosun.ac.kr</a>.
-      Your answers are not lost.
-    </div>
-    <button onclick="downloadBackup()">Save my answers as a file</button>
-  </div>
-</div>
-
-<div id="s-thanks" class="hide">
+<div id="thanks" class="hide">
   <h1>Recorded. <span class="hl">Thank you.</span></h1>
-  <p class="muted" style="margin-top:14px">
-    Your ratings are in. You can close this tab.
-    <br>Questions: <a href="mailto:jjj333@chosun.ac.kr">jjj333@chosun.ac.kr</a>
+  <p class="muted" style="margin-top:12px">
+    You can close this tab. Questions:
+    <a href="mailto:jjj333@chosun.ac.kr">jjj333@chosun.ac.kr</a>
   </p>
 </div>
 
 </div></section>
 
+<div class="submit" id="bar">
+  <div class="submit-in">
+    <button class="primary" id="go" disabled>Submit</button>
+    <span class="tiny" id="hint">Rate every clip to enable this.</span>
+  </div>
+</div>
+
 <script>
-/* ══════════════════════════════════════════════════════════════════
-   CONFIG — everything you are likely to change lives here.
-   ══════════════════════════════════════════════════════════════════ */
+/* ═══════════════ CONFIG ═══════════════ */
 const CFG = {
-  // Apps Script /exec URL. Leave '' to test the flow without sending anything.
-  endpoint: '',
-  stimDir:  'stimuli',        // folder holding the blinded clips + manifest.json
-  abClip:   1,                // which clip index the A/B pairs use
-  attention: 2,               // noise trials hidden in the main block
+  endpoint: '',          // Apps Script /exec URL; '' = offline preview
+  stimDir:  'stimuli',
+  abClip:   1,
   contact:  'jjj333@chosun.ac.kr'
 };
+/* ══════════════════════════════════════ */
 
-/* ══════════════════════════════════════════════════════════════════ */
-const $  = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
-const SCREENS = ['welcome','headphone','brief','rate','ab','done','thanks'];
-
-const S = {
-  pid: null, started: null, manifest: null,
-  plan: [], idx: 0, ratings: [],
-  abPlan: [], abIdx: 0, abAnswers: [],
-  hpRound: 0, hpCorrect: 0, hpAnswer: null,
-  practice: false, practiceLeft: 0,
-  q: null, f: null, played: 0, tStart: 0, abChoice: null, abPlayed: {A:0,B:0}
+const $ = s => document.querySelector(s);
+const WORDS = {
+  quality: ['Bad','Poor','Fair','Good','Excellent'],
+  fit:     ['Not at all','Barely','Somewhat','Mostly','Unmistakably']
 };
+const S = { pid:null, started:null, man:null, items:[], pairs:[], answers:{}, prefs:{} };
 
-/* ---------- tiny persistence, tolerant of blocked storage ---------- */
 const store = {
   get(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } },
   set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} },
   del(k){ try{ localStorage.removeItem(k); }catch(e){} }
 };
+const shuffle = a => { for(let i=a.length-1;i>0;i--){ const j=(Math.random()*(i+1))|0;
+  [a[i],a[j]]=[a[j],a[i]]; } return a; };
 
-function go(name){
-  SCREENS.forEach(s => $('#s-'+s).classList.toggle('hide', s !== name));
-  window.scrollTo({top:0, behavior:'instant'});
+/* ── one shared player ── */
+const audio = new Audio(); audio.preload = 'none';
+let curBtn = null, curWave = null, tick = null;
+function anim(w, on){
+  if(tick){ clearInterval(tick); tick = null; }
+  if(!w) return;
+  w.classList.toggle('on', on);
+  if(!on){ [...w.children].forEach(b => b.style.height = '22%'); return; }
+  tick = setInterval(() => [...w.children].forEach(
+    b => b.style.height = (18 + Math.random()*74) + '%'), 110);
 }
-function progress(done, total, label){
-  $('#prog').textContent = label || '';
-  $('#trackfill').style.width = total ? (100*done/total)+'%' : '0%';
-}
-function shuffle(a, rnd=Math.random){
-  for(let i=a.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
-  return a;
-}
-
-/* ══════════════════ audio ══════════════════ */
-let AC = null;
-const ac = () => AC || (AC = new (window.AudioContext||window.webkitAudioContext)());
-const player = new Audio();
-player.preload = 'auto';
-
-function animate(el, on){ el.classList.toggle('on', on);
-  if(!on){ [...el.children].forEach(b=>b.style.height='20%'); return; }
-  (function tick(){ if(!el.classList.contains('on')) return;
-    [...el.children].forEach(b=>b.style.height=(18+Math.random()*74)+'%');
-    setTimeout(tick, 110); })();
-}
-
-function playFile(src, barsSel){
-  return new Promise(res => {
-    player.src = src; player.currentTime = 0;
-    const bars = $(barsSel); animate(bars, true);
-    player.onended = () => { animate(bars,false); res(); };
-    player.onerror = () => { animate(bars,false); res(); };
-    player.play().catch(()=>{ animate(bars,false); res(); });
-  });
-}
-
-/* white-noise burst, used for the hidden attention trials */
-function playNoise(barsSel){
-  return new Promise(res=>{
-    const c = ac(), dur = 3.2, sr = c.sampleRate;
-    const buf = c.createBuffer(2, sr*dur, sr);
-    for(let ch=0; ch<2; ch++){
-      const d = buf.getChannelData(ch);
-      for(let i=0;i<d.length;i++) d[i] = (Math.random()*2-1)*0.16;
-    }
-    const src = c.createBufferSource(); src.buffer = buf;
-    const g = c.createGain(); g.gain.value = 0.9;
-    src.connect(g).connect(c.destination);
-    const bars = $(barsSel); animate(bars, true);
-    src.onended = () => { animate(bars,false); res(); };
-    src.start();
-  });
-}
-
-/* ══════════════════ step 1 — headphone screen ══════════════════
-   Three 200 Hz tones. One has the channels in antiphase, which cancels
-   at the head and sounds clearly quieter over headphones but not over
-   speakers. Two rounds out of three must be right.                    */
-function toneBuffer(anti){
-  const c = ac(), dur = 1.0, sr = c.sampleRate;
-  const buf = c.createBuffer(2, sr*dur, sr);
-  const L = buf.getChannelData(0), R = buf.getChannelData(1);
-  for(let i=0;i<L.length;i++){
-    const t = i/sr;
-    const env = Math.min(1, t/0.05, (dur-t)/0.05);
-    const v = Math.sin(2*Math.PI*200*t)*0.28*env;
-    L[i] = v; R[i] = anti ? -v : v;
+function play(src, btn, wave){
+  if(curBtn && curBtn !== btn){
+    curBtn.classList.remove('on'); curBtn.textContent = curBtn.dataset.lbl;
+    anim(curWave, false);
   }
-  return buf;
-}
-async function playTones(order){
-  const c = ac(); await c.resume();
-  const bars = $('#hp-bars'); animate(bars, true);
-  for(let k=0;k<order.length;k++){
-    await new Promise(res=>{
-      const s = c.createBufferSource(); s.buffer = toneBuffer(order[k]);
-      s.connect(c.destination); s.onended = res; s.start();
-    });
-    await new Promise(r=>setTimeout(r, 380));
+  if(!audio.paused && curBtn === btn){
+    audio.pause(); btn.classList.remove('on'); btn.textContent = btn.dataset.lbl;
+    anim(wave, false); return;
   }
-  animate(bars, false);
-}
-function startHeadphone(){
-  S.hpRound = 0; S.hpCorrect = 0;
-  $('#hp-fail').classList.add('hide'); $('#hp-retry').classList.add('hide');
-  nextHeadphoneRound(); go('headphone');
-}
-function nextHeadphoneRound(){
-  S.hpAnswer = Math.floor(Math.random()*3);
-  $('#hp-status').textContent = `Round ${S.hpRound+1} of 3.`;
-  $$('[data-hp]').forEach(b=>{ b.disabled = true; b.setAttribute('aria-pressed','false'); });
-  progress(S.hpRound, 3, 'equipment check');
-}
-$('#hp-play').onclick = async () => {
-  $('#hp-play').disabled = true;
-  const order = [0,1,2].map(i => i === S.hpAnswer);
-  await playTones(order);
-  $('#hp-play').disabled = false;
-  $$('[data-hp]').forEach(b => b.disabled = false);
-};
-$$('[data-hp]').forEach(btn => btn.onclick = () => {
-  if(+btn.dataset.hp === S.hpAnswer) S.hpCorrect++;
-  S.hpRound++;
-  if(S.hpRound < 3){ nextHeadphoneRound(); return; }
-  if(S.hpCorrect >= 2){ go('brief'); progress(0,0,'instructions'); }
-  else { $('#hp-fail').classList.remove('hide'); $('#hp-retry').classList.remove('hide'); }
-});
-
-/* ══════════════════ step 2 — practice ══════════════════ */
-function startPractice(){
-  S.practice = true;
-  const g = S.manifest.groups;
-  const sc = S.manifest.scenes[0];
-  const ids = g[sc]['1'].slice(0,2);
-  S.plan = ids.map(id => ({kind:'practice', id, scene:sc}));
-  S.idx = 0; renderRating();
+  audio.src = src; audio.currentTime = 0;
+  curBtn = btn; curWave = wave;
+  btn.classList.add('on'); btn.textContent = 'Playing'; anim(wave, true);
+  audio.play().catch(() => { btn.classList.remove('on');
+    btn.textContent = btn.dataset.lbl; anim(wave, false); });
+  audio.onended = () => { btn.classList.remove('on');
+    btn.textContent = 'Replay'; anim(wave, false); };
 }
 
-/* ══════════════════ step 3 — main block ══════════════════
-   Every rater hears every scene. Within a scene the four systems are
-   presented back to back in random order on a single clip index, which
-   keeps the comparison matched and is what the challenge itself did.   */
-function buildPlan(){
-  const M = S.manifest, items = [];
-  const scenes = shuffle(M.scenes.slice());
-  for(const sc of scenes){
-    const clip = Math.random() < 0.5 ? '1' : '2';
-    const ids = shuffle((M.groups[sc][clip]||[]).slice());
-    ids.forEach(id => items.push({kind:'main', id, scene:sc, clip}));
-  }
-  // hide the attention trials away from the very start and very end
-  for(let k=0;k<CFG.attention;k++){
-    const lo = 4, hi = items.length - 3;
-    const at = lo + Math.floor(Math.random()*(hi-lo));
-    const sc = scenes[Math.floor(Math.random()*scenes.length)];
-    items.splice(at, 0, {kind:'check', id:'__noise__', scene:sc, clip:'-'});
-  }
-  return items;
-}
-function startMain(){
-  S.practice = false;
-  S.plan = buildPlan(); S.idx = 0;
-  S.abPlan = shuffle(S.manifest.scenes.slice())
-    .filter(sc => (S.manifest.ab[sc]||{})[String(CFG.abClip)])
-    .map(sc => ({scene:sc, pair:S.manifest.ab[sc][String(CFG.abClip)].slice()}));
-  renderRating();
-}
-
-/* ---------- rating screen ---------- */
-const WORDS = {
-  quality: ['Bad','Poor','Fair','Good','Excellent'],
-  fit:     ['Not at all','Barely','Somewhat','Mostly','Unmistakably']
-};
-function buildScale(sel, kind, onPick){
-  const box = $(sel); box.innerHTML = '';
-  for(let v=1; v<=5; v++){
+/* ── widgets ── */
+function scale(kind, onPick){
+  const d = document.createElement('div'); d.className = 'opts';
+  for(let v = 1; v <= 5; v++){
     const b = document.createElement('button');
-    b.innerHTML = '<b>'+v+'</b><i>'+WORDS[kind][v-1]+'</i>';
+    b.innerHTML = '<b>' + v + '</b><i>' + WORDS[kind][v-1] + '</i>';
     b.setAttribute('aria-pressed','false');
     b.onclick = () => {
-      [...box.children].forEach(c=>c.setAttribute('aria-pressed','false'));
+      [...d.children].forEach(c => c.setAttribute('aria-pressed','false'));
       b.setAttribute('aria-pressed','true'); onPick(v);
     };
-    box.appendChild(b);
+    d.appendChild(b);
   }
+  return d;
 }
-function renderRating(){
-  const it = S.plan[S.idx];
-  if(!it){ S.practice ? startMain() : startAB(); return; }
-
-  S.q = S.f = null; S.played = 0; S.tStart = performance.now();
-  const label = S.manifest.labels[it.scene] || it.scene;
-
-  $('#rate-eyebrow').textContent = S.practice
-    ? 'Practice — not recorded'
-    : `Step 3 of 4 — clip ${S.idx+1} of ${S.plan.length}`;
-  $('#rate-title').textContent = S.practice ? 'Practice clip' : 'Rate this clip';
-  $('#rate-sub').textContent = S.practice
-    ? 'Nothing here is recorded. Get a feel for the two scales, then continue.'
-    : 'Play it at least once, then rate both scales.';
-  $('#fit-cat').textContent = label;
-  $('#q-val').textContent = $('#f-val').textContent = 'not set';
-  $('#r-hint').textContent = 'Play the clip, then rate both scales.';
-  $('#r-next').disabled = true;
-  $('#r-next').textContent = (S.idx === S.plan.length-1 && S.practice) ? 'Begin the real test' : 'Next';
-
-  buildScale('#q-opts', 'quality', v => { S.q = v; $('#q-val').textContent = v + ' / 5'; check(); });
-  buildScale('#f-opts', 'fit',     v => { S.f = v; $('#f-val').textContent = v + ' / 5'; check(); });
-
-  progress(S.practice ? 0 : S.idx, S.practice ? 0 : S.plan.length,
-           S.practice ? 'practice' : 'rating');
-  go('rate');
+function playRow(label, src){
+  const btn = document.createElement('button');
+  btn.className = 'play'; btn.textContent = label; btn.dataset.lbl = label;
+  const wave = document.createElement('div'); wave.className = 'wave';
+  wave.innerHTML = '<i></i>'.repeat(14);
+  btn.onclick = () => play(src, btn, wave);
+  return { btn, wave };
 }
-function check(){
-  const ok = S.q !== null && S.f !== null && S.played > 0;
-  $('#r-next').disabled = !ok;
-  $('#r-hint').textContent = S.played === 0 ? 'Play the clip first.'
-    : ok ? '' : 'Both scales, please.';
-}
-$('#r-play').onclick = async () => {
-  const it = S.plan[S.idx];
-  $('#r-play').disabled = true;
-  if(it.kind === 'check') await playNoise('#r-bars');
-  else await playFile(`${CFG.stimDir}/${it.id}.${S.manifest.ext}`, '#r-bars');
-  S.played++; $('#r-play').disabled = false;
-  $('#r-play').textContent = 'Play again';
-  check();
-};
-$('#r-next').onclick = () => {
-  const it = S.plan[S.idx];
-  if(!S.practice){
-    S.ratings.push({
-      block:'main', trial_index:S.idx+1, stimulus_id:it.id,
-      scene:it.scene, clip:it.clip, kind:it.kind,
-      quality:S.q, fit:S.f, preference:'',
-      replays:S.played-1,
-      seconds_on_item:+((performance.now()-S.tStart)/1000).toFixed(1)
+
+/* ── build ── */
+function build(){
+  const M = S.man, body = $('#body');
+
+  shuffle(M.scenes.slice()).forEach(sc => {
+    const clip = Math.random() < 0.5 ? '1' : '2';
+    const ids  = shuffle((M.groups[sc][clip] || []).slice());
+    if(!ids.length) return;
+    const name = M.labels[sc] || sc;
+
+    const sec = document.createElement('div'); sec.className = 'scene';
+    const h = document.createElement('div'); h.className = 'scene-h';
+    h.innerHTML = '<b></b><span></span>';
+    h.querySelector('b').textContent = name;
+    h.querySelector('span').textContent = ids.length + ' clips';
+    sec.appendChild(h);
+
+    ids.forEach((id, k) => {
+      S.items.push({ id, scene: sc, clip });
+      const it = document.createElement('div'); it.className = 'item';
+
+      const top = document.createElement('div'); top.className = 'item-top';
+      const lbl = document.createElement('span'); lbl.className = 'lbl';
+      lbl.textContent = k + 1; top.appendChild(lbl);
+      const pr = playRow('Play', CFG.stimDir + '/' + id + '.' + M.ext);
+      top.appendChild(pr.btn); top.appendChild(pr.wave);
+      it.appendChild(top);
+
+      [['Sound quality','quality','q'], ['Category fit — ' + name,'fit','f']]
+        .forEach(([text, kind, key]) => {
+          const row = document.createElement('div'); row.className = 'q';
+          const s2 = document.createElement('span'); s2.textContent = text;
+          row.appendChild(s2);
+          row.appendChild(scale(kind, v => {
+            (S.answers[id] = S.answers[id] || {})[key] = v;
+            const a = S.answers[id];
+            it.classList.toggle('done', !!(a.q && a.f));
+            save(); progress();
+          }));
+          it.appendChild(row);
+        });
+      sec.appendChild(it);
     });
-    store.set('sbcfm_lt', {pid:S.pid, started:S.started, ratings:S.ratings});
-  }
-  S.idx++; $('#r-play').textContent = 'Play'; renderRating();
-};
-
-/* ══════════════════ A/B preference ══════════════════ */
-function startAB(){ S.abIdx = 0; renderAB(); }
-function renderAB(){
-  const it = S.abPlan[S.abIdx];
-  if(!it){ go('done'); progress(1,1,'finish'); return; }
-  S.abChoice = null; S.abPlayed = {A:0,B:0}; S.tStart = performance.now();
-  $('#ab-eyebrow').textContent = `Step 4 of 4 — pair ${S.abIdx+1} of ${S.abPlan.length}`;
-  $('#ab-sub').textContent =
-    `Both clips are meant to be "${S.manifest.labels[it.scene]||it.scene}". `
-    + 'Listen to each, then pick the one you would more readily accept as a real recording.';
-  $$('[data-ab]').forEach(b=>{ b.disabled = true; b.setAttribute('aria-pressed','false'); });
-  $('#ab-next').disabled = true;
-  $('#ab-hint').textContent = 'Play both clips before choosing.';
-  $('#ab-playA').textContent = 'Play A'; $('#ab-playB').textContent = 'Play B';
-  progress(S.abIdx, S.abPlan.length, 'comparison');
-  go('ab');
-}
-async function abPlay(which){
-  const it = S.abPlan[S.abIdx];
-  const id = which === 'A' ? it.pair[0] : it.pair[1];
-  $('#ab-playA').disabled = $('#ab-playB').disabled = true;
-  await playFile(`${CFG.stimDir}/${id}.${S.manifest.ext}`, '#ab-bars');
-  $('#ab-playA').disabled = $('#ab-playB').disabled = false;
-  $('#ab-play'+which).textContent = 'Replay ' + which;
-  S.abPlayed[which]++;
-  if(S.abPlayed.A && S.abPlayed.B){
-    $$('[data-ab]').forEach(b => b.disabled = false);
-    $('#ab-hint').textContent = 'Now choose.';
-  }
-}
-$('#ab-playA').onclick = () => abPlay('A');
-$('#ab-playB').onclick = () => abPlay('B');
-$$('[data-ab]').forEach(b => b.onclick = () => {
-  $$('[data-ab]').forEach(c=>c.setAttribute('aria-pressed','false'));
-  b.setAttribute('aria-pressed','true');
-  S.abChoice = b.dataset.ab; $('#ab-next').disabled = false; $('#ab-hint').textContent = '';
-});
-$('#ab-next').onclick = () => {
-  const it = S.abPlan[S.abIdx];
-  const chosen = S.abChoice === 'none' ? 'none'
-               : (S.abChoice === 'A' ? it.pair[0] : it.pair[1]);
-  S.ratings.push({
-    block:'ab', trial_index:S.abIdx+1, stimulus_id:it.pair.join('|'),
-    scene:it.scene, clip:CFG.abClip, kind:'ab',
-    quality:'', fit:'', preference:chosen,
-    replays:(S.abPlayed.A-1)+(S.abPlayed.B-1),
-    seconds_on_item:+((performance.now()-S.tStart)/1000).toFixed(1)
+    body.appendChild(sec);
   });
-  S.abAnswers.push(chosen);
-  store.set('sbcfm_lt', {pid:S.pid, started:S.started, ratings:S.ratings});
-  S.abIdx++; renderAB();
-};
 
-/* ══════════════════ submit ══════════════════ */
-function payload(){
-  const checks = S.ratings.filter(r => r.kind === 'check');
-  return {
-    participant: S.pid,
-    started_at: S.started,
-    finished_at: new Date().toISOString(),
-    minutes: +((Date.now() - new Date(S.started).getTime())/60000).toFixed(1),
-    headphone_score: S.hpCorrect + '/3',
-    attention_pass: checks.length ? checks.every(c => c.fit <= 2) : '',
-    n_ab: S.abAnswers.length,
-    user_agent: navigator.userAgent,
-    screen: `${screen.width}x${screen.height}`,
-    comment: $('#comment').value.slice(0, 900),
-    ratings: S.ratings
-  };
+  /* forced choice */
+  const ab = shuffle(M.scenes.slice())
+    .filter(sc => (M.ab[sc] || {})[String(CFG.abClip)]);
+  if(ab.length){
+    const sec = document.createElement('div'); sec.className = 'scene';
+    const h = document.createElement('div'); h.className = 'scene-h';
+    h.innerHTML = '<b>Last part — pick one of two</b><span></span>';
+    h.querySelector('span').textContent = ab.length + ' pairs';
+    sec.appendChild(h);
+    const note = document.createElement('p');
+    note.className = 'muted'; note.style.fontSize = '.92rem';
+    note.textContent = 'Two clips of the same sound. Choose whichever you would '
+      + 'more readily accept as a real recording.';
+    sec.appendChild(note);
+
+    ab.forEach(sc => {
+      const pair = M.ab[sc][String(CFG.abClip)].slice();
+      S.pairs.push({ scene: sc, pair });
+      const name = M.labels[sc] || sc;
+
+      const it = document.createElement('div'); it.className = 'item';
+      const top = document.createElement('div'); top.className = 'item-top';
+      const lbl = document.createElement('span');
+      lbl.className = 'lbl'; lbl.style.minWidth = 'auto'; lbl.textContent = name;
+      top.appendChild(lbl);
+      const wave = document.createElement('div'); wave.className = 'wave';
+      wave.innerHTML = '<i></i>'.repeat(14);
+      ['A','B'].forEach((L, i) => {
+        const b = document.createElement('button');
+        b.className = 'play'; b.textContent = 'Play ' + L; b.dataset.lbl = 'Play ' + L;
+        b.onclick = () => play(CFG.stimDir + '/' + pair[i] + '.' + M.ext, b, wave);
+        top.appendChild(b);
+      });
+      top.appendChild(wave); it.appendChild(top);
+
+      const row = document.createElement('div'); row.className = 'pair';
+      const none = document.createElement('button');
+      none.className = 'none'; none.textContent = 'No preference';
+      none.setAttribute('aria-pressed','false');
+      const all = [];
+      const pick = (btn, val) => {
+        all.forEach(c => c.setAttribute('aria-pressed','false'));
+        btn.setAttribute('aria-pressed','true');
+        S.prefs[sc] = val; it.classList.add('done'); save(); progress();
+      };
+      ['A','B'].forEach((L, i) => {
+        const b = document.createElement('button');
+        b.textContent = L + ' is better'; b.setAttribute('aria-pressed','false');
+        b.onclick = () => pick(b, pair[i]);
+        row.appendChild(b); all.push(b);
+      });
+      none.onclick = () => pick(none, 'none');
+      all.push(none);
+      it.appendChild(row); it.appendChild(none);
+      sec.appendChild(it);
+    });
+    body.appendChild(sec);
+  }
+
+  $('#tail').classList.remove('hide');
+  progress();
 }
-$('#submit-btn').onclick = async () => {
-  const btn = $('#submit-btn'); btn.disabled = true;
-  $('#submit-status').textContent = 'Sending…';
+function save(){
+  store.set('foley_lt', { pid:S.pid, started:S.started,
+                          answers:S.answers, prefs:S.prefs });
+}
+function progress(){
+  const need = S.items.length * 2 + S.pairs.length;
+  let have = 0;
+  S.items.forEach(i => { const a = S.answers[i.id] || {};
+    if(a.q) have++; if(a.f) have++; });
+  have += Object.keys(S.prefs).length;
+  $('#prog').textContent = have + ' / ' + need;
+  $('#fill').style.width = need ? (100*have/need) + '%' : '0%';
+  const ok = need > 0 && have === need;
+  $('#go').disabled = !ok;
+  $('#hint').textContent = ok ? 'All done — thank you.' : (need - have) + ' left';
+}
+
+/* ── submit ── */
+function payload(){
+  const rows = [];
+  S.items.forEach((i, k) => {
+    const a = S.answers[i.id] || {};
+    rows.push({ block:'main', trial_index:k+1, stimulus_id:i.id, scene:i.scene,
+      clip:i.clip, kind:'main', quality:a.q || '', fit:a.f || '',
+      preference:'', replays:'', seconds_on_item:'' });
+  });
+  S.pairs.forEach((p, k) => {
+    rows.push({ block:'ab', trial_index:k+1, stimulus_id:p.pair.join('|'),
+      scene:p.scene, clip:CFG.abClip, kind:'ab', quality:'', fit:'',
+      preference:S.prefs[p.scene] || '', replays:'', seconds_on_item:'' });
+  });
+  return { participant:S.pid, started_at:S.started,
+    finished_at:new Date().toISOString(),
+    minutes:+((Date.now() - new Date(S.started).getTime())/60000).toFixed(1),
+    headphone_score:'', attention_pass:'', n_ab:S.pairs.length,
+    user_agent:navigator.userAgent, screen:screen.width + 'x' + screen.height,
+    comment:$('#comment').value.slice(0,900), ratings:rows };
+}
+$('#go').onclick = async () => {
+  const b = $('#go'); b.disabled = true; $('#hint').textContent = 'Sending…';
   const data = payload();
   if(!CFG.endpoint){
-    $('#submit-status').textContent = '';
-    $('#fallback').classList.remove('hide');
-    btn.disabled = false; return;
+    $('#hint').textContent = ''; $('#fallback').classList.remove('hide');
+    b.disabled = false; return;
   }
   try{
-    await fetch(CFG.endpoint, {
-      method:'POST', mode:'no-cors',
+    await fetch(CFG.endpoint, { method:'POST', mode:'no-cors',
       headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body: JSON.stringify(data)
-    });
-    store.del('sbcfm_lt');
-    go('thanks'); progress(1,1,'done');
+      body: JSON.stringify(data) });
+    store.del('foley_lt');
+    ['#head','#body','#tail','#bar'].forEach(x => $(x).classList.add('hide'));
+    $('#thanks').classList.remove('hide');
+    window.scrollTo({ top:0 });
   }catch(e){
-    $('#submit-status').textContent = '';
-    $('#fallback').classList.remove('hide');
-    btn.disabled = false;
+    $('#hint').textContent = ''; $('#fallback').classList.remove('hide');
+    b.disabled = false;
   }
 };
-function downloadBackup(){
-  const blob = new Blob([JSON.stringify(payload(),null,1)], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `listening_${S.pid}.json`;
-  a.click(); URL.revokeObjectURL(a.href);
+function saveBackup(){
+  const blob = new Blob([JSON.stringify(payload(), null, 1)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'listening_' + S.pid + '.json'; a.click(); URL.revokeObjectURL(a.href);
 }
 
-/* ══════════════════ boot ══════════════════ */
-(async function boot(){
+/* ── boot ── */
+(async function(){
   S.pid = 'P' + Math.random().toString(36).slice(2,8).toUpperCase();
   S.started = new Date().toISOString();
-  const saved = store.get('sbcfm_lt');
-  if(saved && saved.ratings && saved.ratings.length){
-    $('#resume-note').textContent =
-      `A partly finished session is in this browser (${saved.ratings.length} clips). Starting again replaces it.`;
-  }
   try{
-    const r = await fetch(`${CFG.stimDir}/manifest.json`, {cache:'no-store'});
-    S.manifest = await r.json();
+    const r = await fetch(CFG.stimDir + '/manifest.json', {cache:'no-store'});
+    S.man = await r.json();
   }catch(e){
-    $('#s-welcome').innerHTML =
-      '<h2>The audio could not be loaded</h2><p class="muted">Please let us know at '
-      + `<a href="mailto:${CFG.contact}">${CFG.contact}</a> and we will fix it.</p>`;
-    return;
+    $('#body').innerHTML = '<h2>The audio could not be loaded</h2>'
+      + '<p class="muted">Please let us know at <a href="mailto:'
+      + CFG.contact + '">' + CFG.contact + '</a>.</p>';
+    $('#bar').classList.add('hide'); return;
   }
-  progress(0,0,'welcome');
+  build();
 })();
 </script>
 </body>
