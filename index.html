@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#F4F3EF">
 <meta name="robots" content="noindex">
-<title>Listening test — Foley sound synthesis</title>
+<title>Mean Opinion Score (MOS) Evaluation — Foley Sound Synthesis</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -129,7 +129,7 @@
 
 <nav class="bar">
   <div class="bar-in">
-    <div class="bar-name">Foley <span>listening test</span></div>
+    <div class="bar-name">Mean Opinion Score <span>(MOS)</span></div>
     <div class="bar-prog" id="prog">0 / 0</div>
   </div>
   <div class="track"><i id="fill"></i></div>
@@ -138,7 +138,10 @@
 <section><div class="wrap">
 
 <div id="head">
-  <h1>Rate these <span class="hl">sound effects</span></h1>
+  <h1>Mean Opinion Score <span class="hl">(MOS) Evaluation</span></h1>
+  <p class="muted" style="margin:12px 0 0">
+    Foley sound synthesis — Chosun University
+  </p>
 
   <div class="alert">
     <span class="ico">🎧</span>
@@ -219,7 +222,8 @@
 <script>
 /* ═══════════════ CONFIG ═══════════════ */
 const CFG = {
-  endpoint: 'https://script.google.com/macros/s/AKfycbx2aBkwPpP7mhsEvmdeAEJjJZywAK9q-PSojbPcS1iVVRgwMXhbMe0cylnzdeGNacOJ/exec',          // Apps Script /exec URL; '' = offline preview
+  endpoint: 'https://script.google.com/macros/s/AKfycbx2aBkwPpP7mhsEvmdeAEJjJZywAK9q-PSojbPcS1iVVRgwMXhbMe0cylnzdeGNacOJ/exec',
+                         // Apps Script /exec URL. Set to '' to preview offline.
   stimDir:  'stimuli',
   clipsPerScene: 1,      // clips shown per scene, drawn at random from the pool.
                          // 1 -> 35 items, about 15 min;  2 -> 70 items, about 24 min
