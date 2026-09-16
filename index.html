@@ -94,11 +94,14 @@
   .opts button[aria-pressed="true"]{background:var(--violet);color:#fff;border-color:var(--violet)}
   .opts button[aria-pressed="true"] i{color:rgba(255,255,255,.88)}
 
-  .pair{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}
-  .pair button,.none{font-family:inherit;font-size:.9rem;border:1px solid var(--rule);
-    background:#fff;border-radius:9px;padding:11px;cursor:pointer;transition:.12s}
-  .pair button:hover,.none:hover{border-color:var(--violet-lo)}
-  .pair button[aria-pressed="true"],.none[aria-pressed="true"]{
+  .choice{background:var(--violet-wash);border-color:rgba(68,1,84,.2)}
+  .choice.done{background:rgba(27,127,122,.05)}
+  .choice-q{font-size:.92rem;font-weight:500;margin-bottom:10px}
+  .five{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .five button,.none{font-family:inherit;font-size:.9rem;border:1px solid var(--rule);
+    background:#fff;border-radius:9px;padding:11px 2px;cursor:pointer;transition:.12s}
+  .five button:hover,.none:hover{border-color:var(--violet-lo)}
+  .five button[aria-pressed="true"],.none[aria-pressed="true"]{
     background:var(--violet);color:#fff;border-color:var(--violet)}
   .none{width:100%;margin-top:7px;font-size:.85rem;color:var(--dim)}
 
@@ -118,7 +121,7 @@
   @media(max-width:600px){
     .q{grid-template-columns:1fr;gap:5px}
     .opts button i{font-size:.6rem}
-    .pair{grid-template-columns:1fr}
+    .five button{font-size:.82rem;padding:11px 0}
   }
 </style>
 </head>
@@ -162,11 +165,16 @@
       발소리입니다.
     </p>
     <p class="muted" style="margin-bottom:.8em">
-      각 묶음은 <b>실제 녹음</b>으로 시작합니다. 어떤 소리인지 참고용이고 점수는
-      매기지 않습니다. 이 녹음은 그 범주의 <b>한 가지 예시일 뿐</b>입니다.
-      개 짖는 소리도 견종과 거리에 따라 다르고, 자동차 소리도 차종과 속도에
-      따라 다릅니다. 그러니 <b>예시와 얼마나 닮았는지</b>를 보지 마시고,
-      <b>제시된 이름을 들었을 때 떠오르는 소리</b>와 견주어 평가해주세요.
+      각 장면은 <b>실제 녹음</b>으로 시작합니다. 어떤 소리인지 참고용이고 점수는
+      매기지 않습니다. 이 녹음은 그 범주의 <b>한 가지 예시일 뿐</b>이며, 아래
+      소리들과는 아무 관계가 없습니다. 개 짖는 소리도 견종과 거리에 따라 다르고,
+      자동차 소리도 차종과 속도에 따라 다릅니다. 그러니 <b>예시와 얼마나
+      닮았는지</b>를 보지 마시고, <b>제시된 이름을 들었을 때 떠오르는 소리</b>와
+      견주어 평가해주세요.
+    </p>
+    <p class="muted" style="margin-bottom:.8em">
+      각 장면 끝에는 방금 들은 <b>다섯 개 중 가장 그럴듯한 것 하나</b>를 고르는
+      칸이 있습니다. 점수가 비슷해도 굳이 하나를 골라주세요.
     </p>
     <div class="note">
       조용한 곳에서 편한 음량으로 맞춰주세요. 중간에 음량을 바꾸면 앞뒤 기준이
@@ -215,7 +223,7 @@
 <script>
 /* ═══════════════ 설정 ═══════════════ */
 const CFG = {
-  endpoint: 'https://script.google.com/macros/s/AKfycbx2aBkwPpP7mhsEvmdeAEJjJZywAK9q-PSojbPcS1iVVRgwMXhbMe0cylnzdeGNacOJ/exec',
+  endpoint: 'https://script.google.com/macros/s/AKfycbyaH7Vyx8O2YZaBhLDo0vmb-tp0ELc0lhRGXwiacKbuP1f3NMyh-kJAm02qgqAu-5Sjbg/exec',
                          // Apps Script /exec 주소. ''로 두면 오프라인 미리보기.
   stimDir:  'stimuli',
   clipsPerScene: 1,      // 장면당 보여줄 클립 수. 1 -> 35문항 약 15분 / 2 -> 70문항 약 24분
@@ -228,7 +236,7 @@ const WORDS = {
   quality: ['나쁨','미흡','보통','좋음','매우 좋음'],
   fit:     ['전혀 아님','거의 아님','어느 정도','대체로','확실함']
 };
-const S = { pid:null, started:null, man:null, items:[], pairs:[], answers:{}, prefs:{} };
+const S = { pid:null, started:null, man:null, items:[], choices:[], answers:{}, prefs:{} };
 
 const store = {
   get(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } },
@@ -313,7 +321,7 @@ function build(){
     sec.appendChild(h);
 
     sets.forEach((clip, si) => {
-      const rid = (M.ref[sc] || {})[clip];
+      const rid = (si === 0) ? M.ref[sc] : null;   // 장면당 한 번만
       if(rid){
         const rf = document.createElement('div'); rf.className = 'ref';
         const rh = document.createElement('div'); rh.className = 'ref-h';
@@ -325,9 +333,9 @@ function build(){
         rf.appendChild(rh);
         const rn = document.createElement('p');
         rn.textContent = '실제 ' + name + ' 녹음이며 점수는 매기지 않습니다.'
-          + ' 이 범주의 한 가지 예시일 뿐이니, 아래 소리들이 이것과 닮았는지'
-          + ' 보지 마시고 \u2018' + name + '\u2019 하면 떠오르는 소리와'
-          + ' 견주어 평가해주세요.';
+          + ' 아래 소리들과는 무관한 별개의 녹음이니, 이것과 닮았는지 보지'
+          + ' 마시고 \u2018' + name + '\u2019 하면 떠오르는 소리와 견주어'
+          + ' 평가해주세요.';
         rf.appendChild(rn);
         sec.appendChild(rf);
       }
@@ -364,70 +372,37 @@ function build(){
           });
         sec.appendChild(it);
       });
-    });
-    body.appendChild(sec);
-  });
 
-  /* 마지막 — 둘 중 하나 고르기 */
-  const ab = M.scenes.filter(sc =>
-    Object.values(M.ab[sc] || {}).some(p => p.length === 2));
-  if(ab.length){
-    const sec = document.createElement('div'); sec.className = 'scene';
-    const h = document.createElement('div'); h.className = 'scene-h';
-    h.innerHTML = '<b>마지막 — 둘 중 하나 고르기</b><span></span>';
-    h.querySelector('span').textContent = ab.length + '쌍';
-    sec.appendChild(h);
-    const note = document.createElement('p');
-    note.className = 'muted'; note.style.fontSize = '.9rem';
-    note.textContent = '같은 범주의 소리 두 개입니다. 둘 중 더 그럴듯하게 '
-      + '들리는 쪽을 골라주세요.';
-    sec.appendChild(note);
-
-    ab.forEach(sc => {
-      const cands = Object.keys(M.ab[sc]).filter(c => M.ab[sc][c].length === 2);
-      const abc = cands[(Math.random()*cands.length)|0];
-      const pair = M.ab[sc][abc].slice();
-      S.pairs.push({ scene: sc, pair, clip: abc });
-      const name = M.labels[sc] || sc;
-
-      const it = document.createElement('div'); it.className = 'item';
-      const top = document.createElement('div'); top.className = 'item-top';
-      const lbl = document.createElement('span');
-      lbl.className = 'lbl'; lbl.style.minWidth = 'auto'; lbl.textContent = name;
-      top.appendChild(lbl);
-      const wave = document.createElement('div'); wave.className = 'wave';
-      wave.innerHTML = '<i></i>'.repeat(14);
-      ['A','B'].forEach((L, i) => {
-        const b = document.createElement('button');
-        b.className = 'play'; b.textContent = L + ' 재생'; b.dataset.lbl = L + ' 재생';
-        b.onclick = () => play(CFG.stimDir + '/' + pair[i] + '.' + M.ext, b, wave);
-        top.appendChild(b);
-      });
-      top.appendChild(wave); it.appendChild(top);
-
-      const row = document.createElement('div'); row.className = 'pair';
+      /* 방금 들은 다섯 개 중 가장 그럴듯한 것 하나 */
+      const ch = document.createElement('div'); ch.className = 'item choice';
+      const qh = document.createElement('div'); qh.className = 'choice-q';
+      qh.textContent = '이 중 실제 ' + name + '(으)로 가장 그럴듯한 것은?';
+      ch.appendChild(qh);
+      const row = document.createElement('div'); row.className = 'five';
       const none = document.createElement('button');
-      none.className = 'none'; none.textContent = '차이를 모르겠음';
+      none.className = 'none'; none.textContent = '고르기 어려움';
       none.setAttribute('aria-pressed','false');
       const all = [];
       const pick = (btn, val) => {
         all.forEach(c => c.setAttribute('aria-pressed','false'));
         btn.setAttribute('aria-pressed','true');
-        S.prefs[sc] = val; it.classList.add('done'); save(); progress();
+        S.prefs[sc] = val; ch.classList.add('done'); save(); progress();
       };
-      ['A','B'].forEach((L, i) => {
+      M.groups[sc][clip].forEach((id, k) => {
         const b = document.createElement('button');
-        b.textContent = L + ' 가 낫다'; b.setAttribute('aria-pressed','false');
-        b.onclick = () => pick(b, pair[i]);
+        b.textContent = (k + 1) + '번';
+        b.setAttribute('aria-pressed','false');
+        b.onclick = () => pick(b, id);
         row.appendChild(b); all.push(b);
       });
       none.onclick = () => pick(none, 'none');
       all.push(none);
-      it.appendChild(row); it.appendChild(none);
-      sec.appendChild(it);
+      ch.appendChild(row); ch.appendChild(none);
+      S.choices.push({ scene: sc, clip });
+      sec.appendChild(ch);
     });
     body.appendChild(sec);
-  }
+  });
 
   $('#tail').classList.remove('hide');
   progress();
@@ -437,7 +412,7 @@ function save(){
                            answers:S.answers, prefs:S.prefs });
 }
 function progress(){
-  const need = S.items.length * 2 + S.pairs.length;
+  const need = S.items.length * 2 + S.choices.length;
   let have = 0;
   S.items.forEach(i => { const a = S.answers[i.id] || {};
     if(a.q) have++; if(a.f) have++; });
@@ -459,15 +434,15 @@ function payload(){
       clip:i.clip, kind:'main', quality:a.q || '', fit:a.f || '',
       preference:'', replays:'', seconds_on_item:'' });
   });
-  S.pairs.forEach((p, k) => {
-    rows.push({ block:'ab', trial_index:k+1, stimulus_id:p.pair.join('|'),
-      scene:p.scene, clip:p.clip, kind:'ab', quality:'', fit:'',
+  S.choices.forEach((p, k) => {
+    rows.push({ block:'choice', trial_index:k+1, stimulus_id:'',
+      scene:p.scene, clip:p.clip, kind:'choice', quality:'', fit:'',
       preference:S.prefs[p.scene] || '', replays:'', seconds_on_item:'' });
   });
   return { participant:S.pid, started_at:S.started,
     finished_at:new Date().toISOString(),
     minutes:+((Date.now() - new Date(S.started).getTime())/60000).toFixed(1),
-    headphone_score:'', attention_pass:'', n_ab:S.pairs.length,
+    headphone_score:'', attention_pass:'', n_choice:S.choices.length,
     user_agent:navigator.userAgent, screen:screen.width + 'x' + screen.height,
     comment:$('#comment').value.slice(0,900), ratings:rows };
 }
