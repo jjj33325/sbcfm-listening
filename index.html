@@ -61,6 +61,15 @@
   .scene-h span{font-family:"JetBrains Mono",monospace;font-size:.68rem;
     letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
 
+  .ref{background:rgba(27,127,122,.06);border:1px solid rgba(27,127,122,.3);
+    border-radius:12px;padding:13px 16px;margin:0 0 12px}
+  .ref-h{display:flex;align-items:center;gap:11px}
+  .ref-h .tag{font-family:"JetBrains Mono",monospace;font-size:.66rem;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--teal);font-weight:500}
+  .ref p{margin:8px 0 0;font-size:.85rem;color:var(--dim);line-height:1.55}
+  .setlbl{font-family:"JetBrains Mono",monospace;font-size:.66rem;
+    letter-spacing:.09em;text-transform:uppercase;color:var(--faint);
+    margin:0 0 7px;padding-left:2px}
   .item{background:var(--card);border:1px solid var(--rule);border-radius:12px;
     padding:14px 16px;margin:0 0 10px;transition:.15s}
   .item.done{border-color:rgba(27,127,122,.45);background:rgba(27,127,122,.035)}
@@ -155,6 +164,12 @@
       call it by that name. The number of events does not matter; one footstep
       and twenty can both fit perfectly.
     </p>
+    <p class="muted" style="margin-bottom:.7em">
+      Each group opens with a <b>real recording</b> of that category, marked as
+      such. It is there to remind you what the category sounds like — there is
+      nothing to rate on it, and the clips underneath are different sounds
+      rather than attempts to copy it. Rate each of those on its own terms.
+    </p>
     <div class="note">
       Find somewhere quiet, set a comfortable volume, and keep it there for the
       whole session — changing it part way makes your ratings inconsistent with
@@ -204,9 +219,10 @@
 <script>
 /* ═══════════════ CONFIG ═══════════════ */
 const CFG = {
-  endpoint: '',          // Apps Script /exec URL; '' = offline preview
+  endpoint: 'https://script.google.com/macros/s/AKfycbx2aBkwPpP7mhsEvmdeAEJjJZywAK9q-PSojbPcS1iVVRgwMXhbMe0cylnzdeGNacOJ/exec',          // Apps Script /exec URL; '' = offline preview
   stimDir:  'stimuli',
-  abClip:   1,
+  clipsPerScene: 1,      // clips shown per scene, drawn at random from the pool.
+                         // 1 -> 35 items, about 15 min;  2 -> 70 items, about 24 min
   contact:  'jjj333@chosun.ac.kr'
 };
 /* ══════════════════════════════════════ */
@@ -284,50 +300,81 @@ function build(){
   const M = S.man, body = $('#body');
 
   shuffle(M.scenes.slice()).forEach(sc => {
-    const clip = Math.random() < 0.5 ? '1' : '2';
-    const ids  = shuffle((M.groups[sc][clip] || []).slice());
-    if(!ids.length) return;
     const name = M.labels[sc] || sc;
+    /* Each listener gets a random subset of the clips available for this scene,
+       so the whole pool is covered across listeners rather than only clip 1. */
+    const avail = Object.keys(M.groups[sc] || {})
+                        .filter(c => M.groups[sc][c] && M.groups[sc][c].length);
+    const sets = shuffle(avail.slice()).slice(0, CFG.clipsPerScene).sort();
+    if(!sets.length) return;
 
     const sec = document.createElement('div'); sec.className = 'scene';
     const h = document.createElement('div'); h.className = 'scene-h';
     h.innerHTML = '<b></b><span></span>';
     h.querySelector('b').textContent = name;
-    h.querySelector('span').textContent = ids.length + ' clips';
+    h.querySelector('span').textContent =
+      sets.reduce((n,c) => n + M.groups[sc][c].length, 0) + ' clips to rate';
     sec.appendChild(h);
 
-    ids.forEach((id, k) => {
-      S.items.push({ id, scene: sc, clip });
-      const it = document.createElement('div'); it.className = 'item';
+    sets.forEach((clip, si) => {
+      /* the real recording, shown openly, as an example of the category */
+      const rid = (M.ref[sc] || {})[clip];
+      if(rid){
+        const rf = document.createElement('div'); rf.className = 'ref';
+        const rh = document.createElement('div'); rh.className = 'ref-h';
+        const tg = document.createElement('span');
+        tg.className = 'tag'; tg.textContent = 'Real recording';
+        rh.appendChild(tg);
+        const rp = playRow('Listen', CFG.stimDir + '/' + rid + '.' + M.ext);
+        rh.appendChild(rp.btn); rh.appendChild(rp.wave);
+        rf.appendChild(rh);
+        const rn = document.createElement('p');
+        rn.textContent = 'This is a real ' + name + ', here so you know what the '
+          + 'category sounds like. Nothing to rate. The clips below are separate '
+          + 'sounds — judge each on its own, not on how closely it copies this one.';
+        rf.appendChild(rn);
+        sec.appendChild(rf);
+      }
 
-      const top = document.createElement('div'); top.className = 'item-top';
-      const lbl = document.createElement('span'); lbl.className = 'lbl';
-      lbl.textContent = k + 1; top.appendChild(lbl);
-      const pr = playRow('Play', CFG.stimDir + '/' + id + '.' + M.ext);
-      top.appendChild(pr.btn); top.appendChild(pr.wave);
-      it.appendChild(top);
+      if(sets.length > 1){
+        const sl = document.createElement('div'); sl.className = 'setlbl';
+        sl.textContent = 'Set ' + (si+1) + ' of ' + sets.length;
+        sec.appendChild(sl);
+      }
 
-      [['Sound quality','quality','q'], ['Category fit — ' + name,'fit','f']]
-        .forEach(([text, kind, key]) => {
-          const row = document.createElement('div'); row.className = 'q';
-          const s2 = document.createElement('span'); s2.textContent = text;
-          row.appendChild(s2);
-          row.appendChild(scale(kind, v => {
-            (S.answers[id] = S.answers[id] || {})[key] = v;
-            const a = S.answers[id];
-            it.classList.toggle('done', !!(a.q && a.f));
-            save(); progress();
-          }));
-          it.appendChild(row);
-        });
-      sec.appendChild(it);
+      shuffle(M.groups[sc][clip].slice()).forEach((id, k) => {
+        S.items.push({ id, scene: sc, clip });
+        const it = document.createElement('div'); it.className = 'item';
+
+        const top = document.createElement('div'); top.className = 'item-top';
+        const lbl = document.createElement('span'); lbl.className = 'lbl';
+        lbl.textContent = k + 1; top.appendChild(lbl);
+        const pr = playRow('Play', CFG.stimDir + '/' + id + '.' + M.ext);
+        top.appendChild(pr.btn); top.appendChild(pr.wave);
+        it.appendChild(top);
+
+        [['Sound quality','quality','q'], ['Category fit — ' + name,'fit','f']]
+          .forEach(([text, kind, key]) => {
+            const row = document.createElement('div'); row.className = 'q';
+            const s2 = document.createElement('span'); s2.textContent = text;
+            row.appendChild(s2);
+            row.appendChild(scale(kind, v => {
+              (S.answers[id] = S.answers[id] || {})[key] = v;
+              const a = S.answers[id];
+              it.classList.toggle('done', !!(a.q && a.f));
+              save(); progress();
+            }));
+            it.appendChild(row);
+          });
+        sec.appendChild(it);
+      });
     });
     body.appendChild(sec);
   });
 
   /* forced choice */
-  const ab = shuffle(M.scenes.slice())
-    .filter(sc => (M.ab[sc] || {})[String(CFG.abClip)]);
+  const ab = shuffle(M.scenes.slice()).filter(sc =>
+    Object.values(M.ab[sc] || {}).some(p => p.length === 2));
   if(ab.length){
     const sec = document.createElement('div'); sec.className = 'scene';
     const h = document.createElement('div'); h.className = 'scene-h';
@@ -341,8 +388,10 @@ function build(){
     sec.appendChild(note);
 
     ab.forEach(sc => {
-      const pair = M.ab[sc][String(CFG.abClip)].slice();
-      S.pairs.push({ scene: sc, pair });
+      const cands = Object.keys(M.ab[sc]).filter(c => M.ab[sc][c].length === 2);
+      const abc = cands[(Math.random()*cands.length)|0];
+      const pair = M.ab[sc][abc].slice();
+      S.pairs.push({ scene: sc, pair, clip: abc });
       const name = M.labels[sc] || sc;
 
       const it = document.createElement('div'); it.className = 'item';
@@ -415,7 +464,7 @@ function payload(){
   });
   S.pairs.forEach((p, k) => {
     rows.push({ block:'ab', trial_index:k+1, stimulus_id:p.pair.join('|'),
-      scene:p.scene, clip:CFG.abClip, kind:'ab', quality:'', fit:'',
+      scene:p.scene, clip:p.clip, kind:'ab', quality:'', fit:'',
       preference:S.prefs[p.scene] || '', replays:'', seconds_on_item:'' });
   });
   return { participant:S.pid, started_at:S.started,
