@@ -1,126 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#F4F3EF">
 <meta name="robots" content="noindex">
-<title>Mean Opinion Score (MOS) Evaluation — Foley Sound Synthesis</title>
+<title>평균 의견 점수(MOS) 평가 — Foley 사운드 합성</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Outfit:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#F4F3EF; --card:#FFFFFF; --ink:#17171B; --dim:#6A6A75;
-    --faint:#9A9AA4; --rule:#DEDDD7; --rule-lo:#E8E7E2;
+    --paper:#F4F3EF; --card:#FFFFFF; --ink:#17171B; --dim:#5F5F6A;
+    --faint:#93939E; --rule:#DEDDD7; --rule-lo:#E8E7E2;
     --violet:#440154; --violet-lo:#7A3E8C; --violet-wash:rgba(68,1,84,.055);
     --teal:#1B7F7A; --yellow:#FDE725; --wrap:780px;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--paper);color:var(--ink);
-    font-family:"Plus Jakarta Sans",system-ui,sans-serif;
-    font-size:16.5px;line-height:1.7;-webkit-font-smoothing:antialiased}
+    font-family:"Noto Sans KR",system-ui,"Malgun Gothic",sans-serif;
+    font-size:16px;line-height:1.78;-webkit-font-smoothing:antialiased;
+    word-break:keep-all}
   .wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
   a{color:var(--teal);text-decoration:none} a:hover{color:var(--violet)}
   :focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:3px}
   p{margin:0 0 1em}
-  h1,h2{font-family:"Outfit",system-ui,sans-serif;letter-spacing:-.015em;margin:0}
-  h1{font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:600;line-height:1.16}
+  h1,h2{font-family:"Outfit","Noto Sans KR",sans-serif;letter-spacing:-.02em;margin:0}
+  h1{font-size:clamp(1.45rem,3vw,1.95rem);font-weight:600;line-height:1.3}
   h1 .hl{color:var(--violet);background:linear-gradient(transparent 62%,rgba(253,231,37,.55) 62%)}
-  h2{font-size:1.1rem;font-weight:600}
 
   nav.bar{position:sticky;top:0;z-index:60;background:rgba(244,243,239,.94);
     backdrop-filter:blur(12px);border-bottom:1px solid var(--rule-lo)}
   .bar-in{max-width:var(--wrap);margin:0 auto;padding:0 24px;height:48px;
     display:flex;align-items:center;justify-content:space-between;gap:14px}
-  .bar-name{font-family:"Outfit",sans-serif;font-weight:700;font-size:.9rem}
+  .bar-name{font-weight:700;font-size:.88rem}
   .bar-name span{color:var(--violet)}
-  .bar-prog{font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--dim)}
+  .bar-prog{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--dim)}
   .track{height:3px;background:var(--rule-lo)}
   .track>i{display:block;height:100%;width:0;background:var(--violet);transition:width .3s}
 
-  section{padding:30px 0 40px}
+  section{padding:28px 0 40px}
   .intro{background:var(--card);border:1px solid var(--rule);border-radius:14px;
-    padding:22px 24px;margin:18px 0 30px}
-  .muted{color:var(--dim);font-size:.95rem}
-  .tiny{color:var(--faint);font-size:.82rem;line-height:1.6}
+    padding:20px 22px;margin:18px 0 30px}
+  .muted{color:var(--dim);font-size:.93rem}
+  .tiny{color:var(--faint);font-size:.8rem;line-height:1.65}
   .note{border-left:3px solid var(--yellow);padding:2px 0 2px 13px;
-    color:var(--dim);font-size:.92rem;margin:14px 0}
-  .alert{display:flex;gap:14px;align-items:flex-start;
-    background:#FFF8D6;border:1px solid #E8D26A;border-radius:12px;
-    padding:16px 18px;margin:20px 0 0}
-  .alert .ico{font-size:1.5rem;line-height:1.2;flex-shrink:0}
-  .alert b{font-family:"Outfit",sans-serif;font-size:1rem;display:block;
-    margin-bottom:3px;color:#6B5600}
-  .alert p{margin:0;font-size:.93rem;color:#6B5600;line-height:1.6}
+    color:var(--dim);font-size:.9rem;margin:14px 0}
+  .alert{display:flex;gap:13px;align-items:flex-start;background:#FFF8D6;
+    border:1px solid #E8D26A;border-radius:12px;padding:15px 17px;margin:18px 0 0}
+  .alert .ico{font-size:1.45rem;line-height:1.2;flex-shrink:0}
+  .alert b{font-size:.98rem;display:block;margin-bottom:2px;color:#6B5600}
+  .alert p{margin:0;font-size:.9rem;color:#6B5600;line-height:1.7}
 
-  .scene{margin:0 0 34px}
+  .scene{margin:0 0 32px}
   .scene-h{display:flex;align-items:baseline;gap:10px;margin:0 0 12px;
     padding-bottom:8px;border-bottom:1px solid var(--rule)}
-  .scene-h b{font-family:"Outfit",sans-serif;font-size:1.12rem;font-weight:600}
+  .scene-h b{font-family:"Outfit","Noto Sans KR",sans-serif;font-size:1.1rem;font-weight:600}
   .scene-h span{font-family:"JetBrains Mono",monospace;font-size:.68rem;
-    letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+    letter-spacing:.04em;color:var(--faint)}
 
   .ref{background:rgba(27,127,122,.06);border:1px solid rgba(27,127,122,.3);
-    border-radius:12px;padding:13px 16px;margin:0 0 12px}
+    border-radius:12px;padding:13px 15px;margin:0 0 12px}
   .ref-h{display:flex;align-items:center;gap:11px}
-  .ref-h .tag{font-family:"JetBrains Mono",monospace;font-size:.66rem;
-    letter-spacing:.08em;text-transform:uppercase;color:var(--teal);font-weight:500}
-  .ref p{margin:8px 0 0;font-size:.85rem;color:var(--dim);line-height:1.55}
-  .setlbl{font-family:"JetBrains Mono",monospace;font-size:.66rem;
-    letter-spacing:.09em;text-transform:uppercase;color:var(--faint);
-    margin:0 0 7px;padding-left:2px}
+  .ref-h .tag{font-size:.7rem;letter-spacing:.02em;color:var(--teal);font-weight:700}
+  .ref p{margin:8px 0 0;font-size:.84rem;color:var(--dim);line-height:1.7}
+  .setlbl{font-family:"JetBrains Mono",monospace;font-size:.68rem;
+    color:var(--faint);margin:0 0 7px;padding-left:2px}
+
   .item{background:var(--card);border:1px solid var(--rule);border-radius:12px;
-    padding:14px 16px;margin:0 0 10px;transition:.15s}
+    padding:13px 15px;margin:0 0 10px;transition:.15s}
   .item.done{border-color:rgba(27,127,122,.45);background:rgba(27,127,122,.035)}
   .item-top{display:flex;align-items:center;gap:11px;margin-bottom:10px}
-  .item-top .lbl{font-family:"JetBrains Mono",monospace;font-size:.72rem;
-    color:var(--faint);min-width:22px}
-  .play{border:1px solid var(--rule);background:var(--violet-wash);
-    border-radius:9px;padding:8px 16px;font-family:inherit;font-size:.9rem;
-    font-weight:600;cursor:pointer;min-width:94px;transition:.14s}
+  .item-top .lbl{font-family:"JetBrains Mono",monospace;font-size:.74rem;
+    color:var(--faint);min-width:20px}
+  .play{border:1px solid var(--rule);background:var(--violet-wash);border-radius:9px;
+    padding:8px 15px;font-family:inherit;font-size:.88rem;font-weight:500;
+    cursor:pointer;min-width:86px;transition:.14s}
   .play:hover{border-color:var(--violet-lo);color:var(--violet)}
   .play.on{background:var(--violet);color:#fff;border-color:var(--violet)}
   .wave{display:flex;gap:2px;align-items:flex-end;height:20px;flex:1}
   .wave i{flex:1;background:var(--rule);border-radius:1px;height:22%}
   .wave.on i{background:var(--violet-lo)}
 
-  .q{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;margin-top:7px}
-  .q>span{font-size:.84rem;color:var(--dim)}
+  .q{display:grid;grid-template-columns:104px 1fr;gap:10px;align-items:center;margin-top:7px}
+  .q>span{font-size:.85rem;color:var(--dim)}
   .opts{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
   .opts button{font-family:inherit;border:1px solid var(--rule);background:#fff;
-    border-radius:8px;padding:7px 2px;cursor:pointer;line-height:1.2;
+    border-radius:8px;padding:7px 2px;cursor:pointer;line-height:1.25;
     display:flex;flex-direction:column;align-items:center;gap:1px;transition:.12s}
   .opts button:hover{border-color:var(--violet-lo)}
-  .opts button b{font-family:"JetBrains Mono",monospace;font-size:.86rem;font-weight:500}
-  .opts button i{font-style:normal;font-size:.62rem;color:var(--faint);text-align:center}
+  .opts button b{font-family:"JetBrains Mono",monospace;font-size:.85rem;font-weight:500}
+  .opts button i{font-style:normal;font-size:.68rem;color:var(--faint);text-align:center}
   .opts button[aria-pressed="true"]{background:var(--violet);color:#fff;border-color:var(--violet)}
-  .opts button[aria-pressed="true"] i{color:rgba(255,255,255,.85)}
+  .opts button[aria-pressed="true"] i{color:rgba(255,255,255,.88)}
 
   .pair{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}
-  .pair button,.none{font-family:inherit;font-size:.92rem;border:1px solid var(--rule);
+  .pair button,.none{font-family:inherit;font-size:.9rem;border:1px solid var(--rule);
     background:#fff;border-radius:9px;padding:11px;cursor:pointer;transition:.12s}
   .pair button:hover,.none:hover{border-color:var(--violet-lo)}
   .pair button[aria-pressed="true"],.none[aria-pressed="true"]{
     background:var(--violet);color:#fff;border-color:var(--violet)}
-  .none{width:100%;margin-top:7px;font-size:.86rem;color:var(--dim)}
+  .none{width:100%;margin-top:7px;font-size:.85rem;color:var(--dim)}
 
   .submit{position:sticky;bottom:0;background:rgba(244,243,239,.96);
     backdrop-filter:blur(10px);border-top:1px solid var(--rule);padding:13px 0}
   .submit-in{max-width:var(--wrap);margin:0 auto;padding:0 24px;
     display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .primary{background:var(--violet);color:#fff;border:1px solid var(--violet);
-    border-radius:9px;font-family:inherit;font-size:1rem;font-weight:600;
+    border-radius:9px;font-family:inherit;font-size:.98rem;font-weight:700;
     padding:12px 30px;cursor:pointer}
   .primary:disabled{opacity:.35;cursor:not-allowed}
-  textarea{width:100%;font-family:inherit;font-size:.94rem;padding:10px;
+  textarea{width:100%;font-family:inherit;font-size:.92rem;padding:10px;
     border:1px solid var(--rule);border-radius:9px;resize:vertical;min-height:62px}
   .warn{border-left:3px solid #C0392B;padding:3px 0 3px 13px;color:#9B2F22;
     font-size:.9rem;margin:12px 0}
   .hide{display:none}
   @media(max-width:600px){
     .q{grid-template-columns:1fr;gap:5px}
-    .opts button i{font-size:.56rem}
+    .opts button i{font-size:.6rem}
     .pair{grid-template-columns:1fr}
   }
 </style>
@@ -129,7 +126,7 @@
 
 <nav class="bar">
   <div class="bar-in">
-    <div class="bar-name">Mean Opinion Score <span>(MOS)</span></div>
+    <div class="bar-name">평균 의견 점수 <span>(MOS)</span></div>
     <div class="bar-prog" id="prog">0 / 0</div>
   </div>
   <div class="track"><i id="fill"></i></div>
@@ -138,50 +135,48 @@
 <section><div class="wrap">
 
 <div id="head">
-  <h1>Mean Opinion Score <span class="hl">(MOS) Evaluation</span></h1>
-  <p class="muted" style="margin:12px 0 0">
-    Foley sound synthesis — Chosun University
-  </p>
+  <h1>평균 의견 점수 <span class="hl">(MOS) 평가</span></h1>
+  <p class="muted" style="margin:12px 0 0">Foley 사운드 합성 — 조선대학교</p>
 
   <div class="alert">
     <span class="ico">🎧</span>
     <div>
-      <b>Please wear headphones</b>
-      <p>Laptop and phone speakers hide the differences this study is about, and
-      ratings made on them are not usable. If you do not have headphones to hand,
-      please come back when you do rather than continuing on speakers.</p>
+      <b>이어폰이나 헤드폰을 착용해 주세요</b>
+      <p>노트북이나 휴대폰 스피커로는 이 실험에서 판단해야 할 차이가 들리지
+      않아, 그렇게 매긴 점수는 사용할 수 없습니다. 지금 없으시다면 스피커로
+      진행하지 마시고 나중에 다시 방문해 주세요.</p>
     </div>
   </div>
 
   <div class="intro">
-    <p class="muted" style="margin-bottom:.7em">
-      You will hear short clips of everyday sounds. For each one give two
-      ratings: how <b>clean</b> it sounds, and how well it <b>matches the name</b>
-      we give it. About 15 minutes. Anonymous, and used only in aggregate for a
-      research paper.
+    <p class="muted" style="margin-bottom:.8em">
+      짧은 효과음을 듣고 두 가지 항목에 점수를 매기는 실험입니다. 소리가 얼마나
+      <b>깨끗한지</b>, 그리고 제시된 <b>이름과 얼마나 맞는지</b>를 각각
+      1~5점으로 평가해 주세요. 약 15분 걸리며, 응답은 익명으로 수집되어 연구
+      논문의 통계로만 쓰입니다.
     </p>
-    <p class="muted" style="margin-bottom:.7em">
-      <b>Sound quality</b> is about the recording itself — free of fuzziness,
-      distortion, hiss, or a muffled, smeared quality. A clean recording of the
-      wrong thing still scores high here. <b>Category fit</b> is whether you would
-      call it by that name. The number of events does not matter; one footstep
-      and twenty can both fit perfectly.
+    <p class="muted" style="margin-bottom:.8em">
+      <b>음질</b>은 녹음 자체의 상태입니다. 지직거림, 뭉개짐, 왜곡, 답답하게
+      먹먹한 느낌이 없을수록 높은 점수입니다. 엉뚱한 소리라도 깨끗하게 녹음되어
+      있다면 음질은 높게 주시면 됩니다.
+      <b>범주 적합도</b>는 그 소리를 제시된 이름으로 부를 수 있는지입니다.
+      소리가 몇 번 나는지는 상관없습니다 — 발소리가 한 번 나든 스무 번 나든 둘
+      다 발소리로 잘 맞을 수 있습니다.
     </p>
-    <p class="muted" style="margin-bottom:.7em">
-      Each group opens with a <b>real recording</b> of that category, marked as
-      such. It is there to remind you what the category sounds like — there is
-      nothing to rate on it, and the clips underneath are different sounds
-      rather than attempts to copy it. Rate each of those on its own terms.
+    <p class="muted" style="margin-bottom:.8em">
+      각 묶음은 <b>실제 녹음</b>으로 시작합니다. 그 범주가 대략 어떤 소리인지
+      감을 잡으시라고 넣은 것이며 점수를 매기지 않습니다. 아래 소리들은 그
+      녹음을 따라 만든 것이 아니라 <b>서로 다른 소리</b>이니, 실제 녹음과 얼마나
+      비슷한지가 아니라 각각을 그 자체로 평가해 주세요.
     </p>
     <div class="note">
-      Find somewhere quiet, set a comfortable volume, and keep it there for the
-      whole session — changing it part way makes your ratings inconsistent with
-      each other.
+      조용한 곳에서 편안한 음량으로 맞추시고, 중간에 음량을 바꾸지 말아 주세요.
+      바꾸면 앞뒤 응답의 기준이 어긋납니다.
     </div>
     <p class="tiny" style="margin:0">
-      Voluntary, and you may close the page at any time — nothing is recorded
-      until you press submit. We store your ratings, browser type and screen
-      size. No name, email or IP address.
+      참여는 자발적이며 언제든 창을 닫으셔도 됩니다. 제출 버튼을 누르기 전까지는
+      아무것도 기록되지 않습니다. 수집 항목은 응답 점수, 브라우저 종류, 화면
+      크기뿐이며 이름·이메일·IP 주소는 저장하지 않습니다.
     </p>
   </div>
 </div>
@@ -189,23 +184,23 @@
 <div id="body"></div>
 
 <div id="tail" class="hide">
-  <div class="scene-h"><b>Anything to add?</b><span>optional</span></div>
-  <textarea id="comment" placeholder="Anything that seemed off about the task or the audio — leave blank if nothing"></textarea>
+  <div class="scene-h"><b>남기실 말씀이 있나요?</b><span>선택 사항</span></div>
+  <textarea id="comment" placeholder="실험이나 오디오에서 이상했던 점이 있다면 자유롭게 적어 주세요. 없으면 비워 두셔도 됩니다."></textarea>
 </div>
 
 <div id="fallback" class="hide">
   <div class="warn">
-    We could not reach the server. Press the button to save a small file and send
-    it to <a href="mailto:jjj333@chosun.ac.kr">jjj333@chosun.ac.kr</a>. Your
-    answers are not lost.
+    서버에 연결하지 못했습니다. 아래 버튼을 눌러 파일로 저장하신 뒤
+    <a href="mailto:jjj333@chosun.ac.kr">jjj333@chosun.ac.kr</a> 로 보내 주세요.
+    응답은 사라지지 않았습니다.
   </div>
-  <button class="primary" onclick="saveBackup()">Save my answers as a file</button>
+  <button class="primary" onclick="saveBackup()">응답을 파일로 저장</button>
 </div>
 
 <div id="thanks" class="hide">
-  <h1>Recorded. <span class="hl">Thank you.</span></h1>
+  <h1>제출되었습니다. <span class="hl">감사합니다.</span></h1>
   <p class="muted" style="margin-top:12px">
-    You can close this tab. Questions:
+    창을 닫으셔도 됩니다. 문의:
     <a href="mailto:jjj333@chosun.ac.kr">jjj333@chosun.ac.kr</a>
   </p>
 </div>
@@ -214,27 +209,26 @@
 
 <div class="submit" id="bar">
   <div class="submit-in">
-    <button class="primary" id="go" disabled>Submit</button>
-    <span class="tiny" id="hint">Rate every clip to enable this.</span>
+    <button class="primary" id="go" disabled>제출하기</button>
+    <span class="tiny" id="hint">모든 항목에 점수를 매기면 활성화됩니다.</span>
   </div>
 </div>
 
 <script>
-/* ═══════════════ CONFIG ═══════════════ */
+/* ═══════════════ 설정 ═══════════════ */
 const CFG = {
   endpoint: 'https://script.google.com/macros/s/AKfycbx2aBkwPpP7mhsEvmdeAEJjJZywAK9q-PSojbPcS1iVVRgwMXhbMe0cylnzdeGNacOJ/exec',
-                         // Apps Script /exec URL. Set to '' to preview offline.
+                         // Apps Script /exec 주소. ''로 두면 오프라인 미리보기.
   stimDir:  'stimuli',
-  clipsPerScene: 1,      // clips shown per scene, drawn at random from the pool.
-                         // 1 -> 35 items, about 15 min;  2 -> 70 items, about 24 min
+  clipsPerScene: 1,      // 장면당 보여줄 클립 수. 1 -> 35문항 약 15분 / 2 -> 70문항 약 24분
   contact:  'jjj333@chosun.ac.kr'
 };
-/* ══════════════════════════════════════ */
+/* ═══════════════════════════════════ */
 
 const $ = s => document.querySelector(s);
 const WORDS = {
-  quality: ['Bad','Poor','Fair','Good','Excellent'],
-  fit:     ['Not at all','Barely','Somewhat','Mostly','Unmistakably']
+  quality: ['나쁨','미흡','보통','좋음','매우 좋음'],
+  fit:     ['전혀 아님','거의 아님','어느 정도','대체로','확실함']
 };
 const S = { pid:null, started:null, man:null, items:[], pairs:[], answers:{}, prefs:{} };
 
@@ -246,7 +240,7 @@ const store = {
 const shuffle = a => { for(let i=a.length-1;i>0;i--){ const j=(Math.random()*(i+1))|0;
   [a[i],a[j]]=[a[j],a[i]]; } return a; };
 
-/* ── one shared player ── */
+/* ── 재생기 하나를 공유 ── */
 const audio = new Audio(); audio.preload = 'none';
 let curBtn = null, curWave = null, tick = null;
 function anim(w, on){
@@ -268,14 +262,14 @@ function play(src, btn, wave){
   }
   audio.src = src; audio.currentTime = 0;
   curBtn = btn; curWave = wave;
-  btn.classList.add('on'); btn.textContent = 'Playing'; anim(wave, true);
+  btn.classList.add('on'); btn.textContent = '재생 중'; anim(wave, true);
   audio.play().catch(() => { btn.classList.remove('on');
     btn.textContent = btn.dataset.lbl; anim(wave, false); });
   audio.onended = () => { btn.classList.remove('on');
-    btn.textContent = 'Replay'; anim(wave, false); };
+    btn.textContent = '다시 듣기'; anim(wave, false); };
 }
 
-/* ── widgets ── */
+/* ── 부품 ── */
 function scale(kind, onPick){
   const d = document.createElement('div'); d.className = 'opts';
   for(let v = 1; v <= 5; v++){
@@ -299,14 +293,13 @@ function playRow(label, src){
   return { btn, wave };
 }
 
-/* ── build ── */
+/* ── 화면 구성 ── */
 function build(){
   const M = S.man, body = $('#body');
 
   shuffle(M.scenes.slice()).forEach(sc => {
     const name = M.labels[sc] || sc;
-    /* Each listener gets a random subset of the clips available for this scene,
-       so the whole pool is covered across listeners rather than only clip 1. */
+    /* 참가자마다 장면별로 무작위 클립을 받아, 전체 풀이 고루 평가되도록 한다 */
     const avail = Object.keys(M.groups[sc] || {})
                         .filter(c => M.groups[sc][c] && M.groups[sc][c].length);
     const sets = shuffle(avail.slice()).slice(0, CFG.clipsPerScene).sort();
@@ -317,32 +310,32 @@ function build(){
     h.innerHTML = '<b></b><span></span>';
     h.querySelector('b').textContent = name;
     h.querySelector('span').textContent =
-      sets.reduce((n,c) => n + M.groups[sc][c].length, 0) + ' clips to rate';
+      '평가 ' + sets.reduce((n,c) => n + M.groups[sc][c].length, 0) + '개';
     sec.appendChild(h);
 
     sets.forEach((clip, si) => {
-      /* the real recording, shown openly, as an example of the category */
       const rid = (M.ref[sc] || {})[clip];
       if(rid){
         const rf = document.createElement('div'); rf.className = 'ref';
         const rh = document.createElement('div'); rh.className = 'ref-h';
         const tg = document.createElement('span');
-        tg.className = 'tag'; tg.textContent = 'Real recording';
+        tg.className = 'tag'; tg.textContent = '실제 녹음';
         rh.appendChild(tg);
-        const rp = playRow('Listen', CFG.stimDir + '/' + rid + '.' + M.ext);
+        const rp = playRow('들어보기', CFG.stimDir + '/' + rid + '.' + M.ext);
         rh.appendChild(rp.btn); rh.appendChild(rp.wave);
         rf.appendChild(rh);
         const rn = document.createElement('p');
-        rn.textContent = 'This is a real ' + name + ', here so you know what the '
-          + 'category sounds like. Nothing to rate. The clips below are separate '
-          + 'sounds — judge each on its own, not on how closely it copies this one.';
+        rn.textContent = '실제 ' + name + ' 녹음입니다. 이 범주가 어떤 소리인지'
+          + ' 참고하시라고 넣었을 뿐, 점수를 매기지 않습니다. 아래 소리들은 이'
+          + ' 녹음을 따라 만든 것이 아니라 서로 다른 소리이니, 비슷한 정도가'
+          + ' 아니라 각각을 그 자체로 평가해 주세요.';
         rf.appendChild(rn);
         sec.appendChild(rf);
       }
 
       if(sets.length > 1){
         const sl = document.createElement('div'); sl.className = 'setlbl';
-        sl.textContent = 'Set ' + (si+1) + ' of ' + sets.length;
+        sl.textContent = '묶음 ' + (si+1) + ' / ' + sets.length;
         sec.appendChild(sl);
       }
 
@@ -353,11 +346,11 @@ function build(){
         const top = document.createElement('div'); top.className = 'item-top';
         const lbl = document.createElement('span'); lbl.className = 'lbl';
         lbl.textContent = k + 1; top.appendChild(lbl);
-        const pr = playRow('Play', CFG.stimDir + '/' + id + '.' + M.ext);
+        const pr = playRow('재생', CFG.stimDir + '/' + id + '.' + M.ext);
         top.appendChild(pr.btn); top.appendChild(pr.wave);
         it.appendChild(top);
 
-        [['Sound quality','quality','q'], ['Category fit — ' + name,'fit','f']]
+        [['음질','quality','q'], ['적합도 — ' + name,'fit','f']]
           .forEach(([text, kind, key]) => {
             const row = document.createElement('div'); row.className = 'q';
             const s2 = document.createElement('span'); s2.textContent = text;
@@ -376,19 +369,19 @@ function build(){
     body.appendChild(sec);
   });
 
-  /* forced choice */
+  /* 마지막 — 둘 중 하나 고르기 */
   const ab = shuffle(M.scenes.slice()).filter(sc =>
     Object.values(M.ab[sc] || {}).some(p => p.length === 2));
   if(ab.length){
     const sec = document.createElement('div'); sec.className = 'scene';
     const h = document.createElement('div'); h.className = 'scene-h';
-    h.innerHTML = '<b>Last part — pick one of two</b><span></span>';
-    h.querySelector('span').textContent = ab.length + ' pairs';
+    h.innerHTML = '<b>마지막 — 둘 중 하나 고르기</b><span></span>';
+    h.querySelector('span').textContent = ab.length + '쌍';
     sec.appendChild(h);
     const note = document.createElement('p');
-    note.className = 'muted'; note.style.fontSize = '.92rem';
-    note.textContent = 'Two clips of the same sound. Choose whichever you would '
-      + 'more readily accept as a real recording.';
+    note.className = 'muted'; note.style.fontSize = '.9rem';
+    note.textContent = '같은 범주의 소리 두 개입니다. 둘 중 실제 녹음이라고 하면 '
+      + '더 그럴듯하게 들리는 쪽을 골라 주세요.';
     sec.appendChild(note);
 
     ab.forEach(sc => {
@@ -407,7 +400,7 @@ function build(){
       wave.innerHTML = '<i></i>'.repeat(14);
       ['A','B'].forEach((L, i) => {
         const b = document.createElement('button');
-        b.className = 'play'; b.textContent = 'Play ' + L; b.dataset.lbl = 'Play ' + L;
+        b.className = 'play'; b.textContent = L + ' 재생'; b.dataset.lbl = L + ' 재생';
         b.onclick = () => play(CFG.stimDir + '/' + pair[i] + '.' + M.ext, b, wave);
         top.appendChild(b);
       });
@@ -415,7 +408,7 @@ function build(){
 
       const row = document.createElement('div'); row.className = 'pair';
       const none = document.createElement('button');
-      none.className = 'none'; none.textContent = 'No preference';
+      none.className = 'none'; none.textContent = '차이를 모르겠음';
       none.setAttribute('aria-pressed','false');
       const all = [];
       const pick = (btn, val) => {
@@ -425,7 +418,7 @@ function build(){
       };
       ['A','B'].forEach((L, i) => {
         const b = document.createElement('button');
-        b.textContent = L + ' is better'; b.setAttribute('aria-pressed','false');
+        b.textContent = L + ' 가 낫다'; b.setAttribute('aria-pressed','false');
         b.onclick = () => pick(b, pair[i]);
         row.appendChild(b); all.push(b);
       });
@@ -441,8 +434,8 @@ function build(){
   progress();
 }
 function save(){
-  store.set('foley_lt', { pid:S.pid, started:S.started,
-                          answers:S.answers, prefs:S.prefs });
+  store.set('foley_mos', { pid:S.pid, started:S.started,
+                           answers:S.answers, prefs:S.prefs });
 }
 function progress(){
   const need = S.items.length * 2 + S.pairs.length;
@@ -454,10 +447,11 @@ function progress(){
   $('#fill').style.width = need ? (100*have/need) + '%' : '0%';
   const ok = need > 0 && have === need;
   $('#go').disabled = !ok;
-  $('#hint').textContent = ok ? 'All done — thank you.' : (need - have) + ' left';
+  $('#hint').textContent = ok ? '모두 완료되었습니다. 감사합니다.'
+                              : (need - have) + '개 남았습니다';
 }
 
-/* ── submit ── */
+/* ── 제출 ── */
 function payload(){
   const rows = [];
   S.items.forEach((i, k) => {
@@ -479,7 +473,7 @@ function payload(){
     comment:$('#comment').value.slice(0,900), ratings:rows };
 }
 $('#go').onclick = async () => {
-  const b = $('#go'); b.disabled = true; $('#hint').textContent = 'Sending…';
+  const b = $('#go'); b.disabled = true; $('#hint').textContent = '전송 중…';
   const data = payload();
   if(!CFG.endpoint){
     $('#hint').textContent = ''; $('#fallback').classList.remove('hide');
@@ -489,7 +483,7 @@ $('#go').onclick = async () => {
     await fetch(CFG.endpoint, { method:'POST', mode:'no-cors',
       headers:{'Content-Type':'text/plain;charset=utf-8'},
       body: JSON.stringify(data) });
-    store.del('foley_lt');
+    store.del('foley_mos');
     ['#head','#body','#tail','#bar'].forEach(x => $(x).classList.add('hide'));
     $('#thanks').classList.remove('hide');
     window.scrollTo({ top:0 });
@@ -501,10 +495,10 @@ $('#go').onclick = async () => {
 function saveBackup(){
   const blob = new Blob([JSON.stringify(payload(), null, 1)], {type:'application/json'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = 'listening_' + S.pid + '.json'; a.click(); URL.revokeObjectURL(a.href);
+  a.download = 'mos_' + S.pid + '.json'; a.click(); URL.revokeObjectURL(a.href);
 }
 
-/* ── boot ── */
+/* ── 시작 ── */
 (async function(){
   S.pid = 'P' + Math.random().toString(36).slice(2,8).toUpperCase();
   S.started = new Date().toISOString();
@@ -512,9 +506,9 @@ function saveBackup(){
     const r = await fetch(CFG.stimDir + '/manifest.json', {cache:'no-store'});
     S.man = await r.json();
   }catch(e){
-    $('#body').innerHTML = '<h2>The audio could not be loaded</h2>'
-      + '<p class="muted">Please let us know at <a href="mailto:'
-      + CFG.contact + '">' + CFG.contact + '</a>.</p>';
+    $('#body').innerHTML = '<h2>오디오를 불러오지 못했습니다</h2>'
+      + '<p class="muted"><a href="mailto:' + CFG.contact + '">'
+      + CFG.contact + '</a> 로 알려 주시면 고치겠습니다.</p>';
     $('#bar').classList.add('hide'); return;
   }
   build();
