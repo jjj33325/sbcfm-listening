@@ -291,9 +291,10 @@ function playRow(label, src){
 function build(){
   const M = S.man, body = $('#body');
 
-  shuffle(M.scenes.slice()).forEach(sc => {
+  /* 장면 순서와 시스템 순서는 고정한다. 자리 k 는 언제나 같은 시스템이라
+     자료를 손으로 확인하기 쉽다. 무작위로 두는 것은 어느 클립을 받느냐뿐. */
+  M.scenes.forEach(sc => {
     const name = M.labels[sc] || sc;
-    /* 참가자마다 장면별로 무작위 클립을 받아, 전체 풀이 고루 평가되도록 한다 */
     const avail = Object.keys(M.groups[sc] || {})
                         .filter(c => M.groups[sc][c] && M.groups[sc][c].length);
     const sets = shuffle(avail.slice()).slice(0, CFG.clipsPerScene).sort();
@@ -330,7 +331,7 @@ function build(){
         sec.appendChild(sl);
       }
 
-      shuffle(M.groups[sc][clip].slice()).forEach((id, k) => {
+      M.groups[sc][clip].forEach((id, k) => {
         S.items.push({ id, scene: sc, clip });
         const it = document.createElement('div'); it.className = 'item';
 
@@ -361,7 +362,7 @@ function build(){
   });
 
   /* 마지막 — 둘 중 하나 고르기 */
-  const ab = shuffle(M.scenes.slice()).filter(sc =>
+  const ab = M.scenes.filter(sc =>
     Object.values(M.ab[sc] || {}).some(p => p.length === 2));
   if(ab.length){
     const sec = document.createElement('div'); sec.className = 'scene';
